@@ -1,0 +1,217 @@
+openapi: 3.0.0
+info:
+  title: Stats Tracker API
+  version: 1.0.0
+  description: API pre správu hráčov, zápasov a generovanie vyrovnaných tímov.
+servers:
+  - url: http://localhost:8080
+security:
+  - bearerAuth: []
+
+paths:
+  /players:
+    get:
+      summary: Získanie zoznamu všetkých hráčov
+      operationId: listPlayers
+      tags:
+        - Player
+      responses:
+        "200":
+          description: Zoznam hráčov
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PlayerSummary"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      summary: Pridanie nového hráča (UC1)
+      operationId: createPlayer
+      tags:
+        - Player
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePlayerRequest"
+      responses:
+        "201":
+          description: Hráč úspešne vytvorený
+        "400":
+          description: Bad Request – chýbajúce alebo neplatné pole
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Conflict – prezývka je už obsadená
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /team-suggestions:
+    post:
+      summary: Generovanie návrhov vyrovnaných tímov (UC4)
+      operationId: generateTeamSuggestions
+      tags:
+        - TeamSuggestion
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TeamSuggestionRequest"
+      responses:
+        "200":
+          description: Návrhy tímov úspešne vygenerované
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TeamSuggestionResponse"
+        "400":
+          description: Bad Request – počet hráčov nie je presne 10, alebo sú duplikáty
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not Found – hráč s daným ID neexistuje
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            type: string
+        timestamp:
+          type: string
+          format: date-time
+        path:
+          type: string
+
+    # ── Player ────────────────────────────────────────────────────────────────
+    PlayerSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        name:
+          type: string
+        nickname:
+          type: string
+
+    CreatePlayerRequest:
+      type: object
+      required:
+        - name
+        - nickname
+      properties:
+        name:
+          type: string
+          minLength: 1
+        nickname:
+          type: string
+          minLength: 1
+
+    # ── Team Suggestion ───────────────────────────────────────────────────────
+    TeamSuggestionRequest:
+      type: object
+      required:
+        - playerIds
+      properties:
+        playerIds:
+          type: array
+          items:
+            type: integer
+            format: int64
+          minItems: 10
+          maxItems: 10
+
+    TeamSuggestionResponse:
+      type: object
+      properties:
+        suggestions:
+          type: array
+          items:
+            $ref: "#/components/schemas/TeamSuggestion"
+        warnings:
+          type: array
+          description: Hráči bez histórie zápasov – použité neutrálne priemerné hodnoty
+          items:
+            type: string
+
+    TeamSuggestion:
+      type: object
+      properties:
+        teamA:
+          $ref: "#/components/schemas/TeamDefinition"
+        teamB:
+          $ref: "#/components/schemas/TeamDefinition"
+        balanceScore:
+          type: number
+          format: double
+          description: Skóre vyrovnanosti – čím vyššie, tým vyrovnanejšie tímy
+
+    TeamDefinition:
+      type: object
+      properties:
+        players:
+          type: array
+          items:
+            $ref: "#/components/schemas/PlayerSummary"

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings
+        xmlns="https://jakarta.ee/xml/ns/persistence/orm"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+        https://jakarta.ee/xml/ns/persistence/orm
+        https://jakarta.ee/xml/ns/persistence/orm/orm_3_0.xsd"
+        version="3.0">
+
+    <!-- Player Entity -->
+    <entity class="sk.posam.fsa.statstracker.domain.Player" access="FIELD">
+        <table name="player"/>
+        <attributes>
+            <id name="id">
+                <column name="player_id"/>
+                <generated-value strategy="IDENTITY"/>
+            </id>
+            <basic name="name">
+                <column name="name" nullable="false"/>
+            </basic>
+            <basic name="nickname">
+                <column name="nickname" nullable="false"/>
+            </basic>
+        </attributes>
+    </entity>
+
+    <!-- PlayerMatchStats Entity -->
+    <entity class="sk.posam.fsa.statstracker.domain.PlayerMatchStats" access="FIELD">
+        <table name="player_match_stats"/>
+        <attributes>
+            <id name="id">
+                <column name="player_match_stats_id"/>
+                <generated-value strategy="IDENTITY"/>
+            </id>
+            <basic name="playerId">
+                <column name="player_id" nullable="false"/>
+            </basic>
+            <basic name="kills">
+                <column name="kills" nullable="false"/>
+            </basic>
+            <basic name="deaths">
+                <column name="deaths" nullable="false"/>
+            </basic>
+            <basic name="assists">
+                <column name="assists" nullable="false"/>
+            </basic>
+            <basic name="adr">
+                <column name="adr" nullable="false"/>
+            </basic>
+            <basic name="hsPercentage">
+                <column name="hs_percentage" nullable="false"/>
+            </basic>
+            <basic name="hltvRating">
+                <column name="hltv_rating" nullable="false"/>
+            </basic>
+        </attributes>
+    </entity>
+
+</entity-mappings>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+
+    <changeSet id="20260403_001" author="statstracker">
+        <comment>Create player and player_match_stats tables</comment>
+
+        <createTable tableName="player">
+            <column name="player_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="player_pk" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false" notNullConstraintName="player_nn01"/>
+            </column>
+            <column name="nickname" type="VARCHAR(255)">
+                <constraints nullable="false" notNullConstraintName="player_nn02"
+                             unique="true" uniqueConstraintName="player_uq01"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="player_match_stats">
+            <column name="player_match_stats_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="player_match_stats_pk" nullable="false"/>
+            </column>
+            <column name="player_id" type="BIGINT">
+                <constraints nullable="false" notNullConstraintName="player_match_stats_nn01"
+                             foreignKeyName="player_match_stats_fk01" references="player(player_id)"/>
+            </column>
+            <column name="kills" type="INTEGER">
+                <constraints nullable="false" notNullConstraintName="player_match_stats_nn02"/>
+            </column>
+            <column name="deaths" type="INTEGER">
+                <constraints nullable="false" notNullConstraintName="player_match_stats_nn03"/>
+            </column>
+            <column name="assists" type="INTEGER">
+                <constraints nullable="false" notNullConstraintName="player_match_stats_nn04"/>
+            </column>
+            <column name="adr" type="DOUBLE PRECISION">
+                <constraints nullable="false" notNullConstraintName="player_match_stats_nn05"/>
+            </column>
+            <column name="hs_percentage" type="DOUBLE PRECISION">
+                <constraints nullable="false" notNullConstraintName="player_match_stats_nn06"/>
+            </column>
+            <column name="hltv_rating" type="DOUBLE PRECISION">
+                <constraints nullable="false" notNullConstraintName="player_match_stats_nn07"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

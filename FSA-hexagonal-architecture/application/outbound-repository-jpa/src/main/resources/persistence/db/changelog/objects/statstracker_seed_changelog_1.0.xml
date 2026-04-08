@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+
+    <changeSet id="20260403_002" author="statstracker">
+        <comment>Seed sample players and match stats</comment>
+
+        <insert tableName="player">
+            <column name="name" value="Lukas Kubik"/>
+            <column name="nickname" value="Bakyt"/>
+        </insert>
+        <insert tableName="player">
+            <column name="name" value="Adam Novak"/>
+            <column name="nickname" value="Mave"/>
+        </insert>
+        <insert tableName="player">
+            <column name="name" value="Martin Kovac"/>
+            <column name="nickname" value="KiRT4P"/>
+        </insert>
+        <insert tableName="player">
+            <column name="name" value="Peter Horak"/>
+            <column name="nickname" value="rdlf"/>
+        </insert>
+        <insert tableName="player">
+            <column name="name" value="Tomas Blaho"/>
+            <column name="nickname" value="Platina 10"/>
+        </insert>
+        <insert tableName="player">
+            <column name="name" value="Juraj Maslo"/>
+            <column name="nickname" value="Fr1do"/>
+        </insert>
+        <insert tableName="player">
+            <column name="name" value="Filip Kral"/>
+            <column name="nickname" value="npol20"/>
+        </insert>
+        <insert tableName="player">
+            <column name="name" value="Michal Oravec"/>
+            <column name="nickname" value="blexn26"/>
+        </insert>
+        <insert tableName="player">
+            <column name="name" value="Ondrej Bauer"/>
+            <column name="nickname" value="BillyB"/>
+        </insert>
+        <insert tableName="player">
+            <column name="name" value="Jakub Polak"/>
+            <column name="nickname" value="Mr. Flash"/>
+        </insert>
+
+        <!-- Match stats for player 1 (Bakyt) -->
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'Bakyt')"/>
+            <column name="kills" valueNumeric="28"/>
+            <column name="deaths" valueNumeric="14"/>
+            <column name="assists" valueNumeric="5"/>
+            <column name="adr" valueNumeric="98.5"/>
+            <column name="hs_percentage" valueNumeric="52.3"/>
+            <column name="hltv_rating" valueNumeric="1.42"/>
+        </insert>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'Bakyt')"/>
+            <column name="kills" valueNumeric="22"/>
+            <column name="deaths" valueNumeric="18"/>
+            <column name="assists" valueNumeric="7"/>
+            <column name="adr" valueNumeric="85.2"/>
+            <column name="hs_percentage" valueNumeric="45.0"/>
+            <column name="hltv_rating" valueNumeric="1.18"/>
+        </insert>
+
+        <!-- Match stats for player 2 (Mave) -->
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'Mave')"/>
+            <column name="kills" valueNumeric="25"/>
+            <column name="deaths" valueNumeric="16"/>
+            <column name="assists" valueNumeric="6"/>
+            <column name="adr" valueNumeric="91.0"/>
+            <column name="hs_percentage" valueNumeric="48.7"/>
+            <column name="hltv_rating" valueNumeric="1.31"/>
+        </insert>
+
+        <!-- Match stats for player 3 (KiRT4P) -->
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'KiRT4P')"/>
+            <column name="kills" valueNumeric="20"/>
+            <column name="deaths" valueNumeric="15"/>
+            <column name="assists" valueNumeric="8"/>
+            <column name="adr" valueNumeric="79.5"/>
+            <column name="hs_percentage" valueNumeric="35.0"/>
+            <column name="hltv_rating" valueNumeric="1.15"/>
+        </insert>
+
+        <!-- Match stats for player 4 (rdlf) -->
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'rdlf')"/>
+            <column name="kills" valueNumeric="26"/>
+            <column name="deaths" valueNumeric="13"/>
+            <column name="assists" valueNumeric="4"/>
+            <column name="adr" valueNumeric="95.1"/>
+            <column name="hs_percentage" valueNumeric="50.0"/>
+            <column name="hltv_rating" valueNumeric="1.38"/>
+        </insert>
+
+        <!-- Match stats for player 5 (Platina 10) -->
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'Platina 10')"/>
+            <column name="kills" valueNumeric="19"/>
+            <column name="deaths" valueNumeric="16"/>
+            <column name="assists" valueNumeric="9"/>
+            <column name="adr" valueNumeric="76.3"/>
+            <column name="hs_percentage" valueNumeric="40.2"/>
+            <column name="hltv_rating" valueNumeric="1.10"/>
+        </insert>
+
+        <!-- Match stats for remaining players (Fr1do, npol20, blexn26, BillyB, BillyB) -->
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'Fr1do')"/>
+            <column name="kills" valueNumeric="18"/>
+            <column name="deaths" valueNumeric="17"/>
+            <column name="assists" valueNumeric="10"/>
+            <column name="adr" valueNumeric="72.0"/>
+            <column name="hs_percentage" valueNumeric="38.5"/>
+            <column name="hltv_rating" valueNumeric="1.05"/>
+        </insert>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'npol20')"/>
+            <column name="kills" valueNumeric="14"/>
+            <column name="deaths" valueNumeric="18"/>
+            <column name="assists" valueNumeric="12"/>
+            <column name="adr" valueNumeric="65.0"/>
+            <column name="hs_percentage" valueNumeric="30.0"/>
+            <column name="hltv_rating" valueNumeric="0.92"/>
+        </insert>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'blexn26')"/>
+            <column name="kills" valueNumeric="21"/>
+            <column name="deaths" valueNumeric="15"/>
+            <column name="assists" valueNumeric="6"/>
+            <column name="adr" valueNumeric="81.0"/>
+            <column name="hs_percentage" valueNumeric="42.0"/>
+            <column name="hltv_rating" valueNumeric="1.20"/>
+        </insert>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'BillyB')"/>
+            <column name="kills" valueNumeric="17"/>
+            <column name="deaths" valueNumeric="17"/>
+            <column name="assists" valueNumeric="8"/>
+            <column name="adr" valueNumeric="70.5"/>
+            <column name="hs_percentage" valueNumeric="36.0"/>
+            <column name="hltv_rating" valueNumeric="1.00"/>
+        </insert>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'BillyB')"/>
+            <column name="kills" valueNumeric="20"/>
+            <column name="deaths" valueNumeric="16"/>
+            <column name="assists" valueNumeric="7"/>
+            <column name="adr" valueNumeric="78.0"/>
+            <column name="hs_percentage" valueNumeric="39.0"/>
+            <column name="hltv_rating" valueNumeric="1.12"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

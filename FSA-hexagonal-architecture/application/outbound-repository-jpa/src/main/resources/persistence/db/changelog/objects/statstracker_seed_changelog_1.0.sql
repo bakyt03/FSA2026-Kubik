@@ -1,0 +1,1 @@
+-- Seed data is now handled via Liquibase XML changesets in statstracker_seed_changelog_1.0.xml
