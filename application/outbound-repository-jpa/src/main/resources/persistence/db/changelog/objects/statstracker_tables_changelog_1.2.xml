@@ -6,6 +6,22 @@
                             http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd"
         objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
 
-    <!-- Reserved for future table migrations (1.2) -->
+    <changeSet id="20260523_001a" author="statstracker">
+        <comment>Fix NULL damage values left by seed data that predates the damage column</comment>
+        <sql>
+            UPDATE player_match_stats SET damage = 0 WHERE damage IS NULL;
+            ALTER TABLE player_match_stats ALTER COLUMN damage SET NOT NULL;
+            ALTER TABLE player_match_stats ALTER COLUMN damage SET DEFAULT 0;
+        </sql>
+    </changeSet>
+
+    <changeSet id="20260523_001b" author="statstracker">
+        <comment>Fix wrong map names (de_xxx) to match Map enum (UPPERCASE)</comment>
+        <sql>
+            UPDATE match SET map = 'MIRAGE'  WHERE map = 'de_mirage';
+            UPDATE match SET map = 'INFERNO' WHERE map = 'de_inferno';
+            UPDATE match SET map = 'ANCIENT' WHERE map = 'de_ancient';
+        </sql>
+    </changeSet>
 
 </databaseChangeLog>

@@ -6,6 +6,407 @@
                             http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd"
         objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
 
-    <!-- Reserved for future seed migrations -->
+    <changeSet id="20260523_002a" author="statstracker">
+        <comment>Remove orphan stats that have no match context (from pre-match seed)</comment>
+        <sql>DELETE FROM player_match_stats WHERE match_id IS NULL;</sql>
+    </changeSet>
+
+    <changeSet id="20260523_002b" author="statstracker">
+        <validCheckSum>ANY</validCheckSum>
+        <comment>Seed 3 complete matches</comment>
+        <insert tableName="match">
+            <column name="map" value="MIRAGE"/>
+            <column name="played_at" valueDate="2026-05-01"/>
+            <column name="team1_score" valueNumeric="13"/>
+            <column name="team2_score" valueNumeric="7"/>
+        </insert>
+        <insert tableName="match">
+            <column name="map" value="INFERNO"/>
+            <column name="played_at" valueDate="2026-05-08"/>
+            <column name="team1_score" valueNumeric="16"/>
+            <column name="team2_score" valueNumeric="12"/>
+        </insert>
+        <insert tableName="match">
+            <column name="map" value="ANCIENT"/>
+            <column name="played_at" valueDate="2026-05-15"/>
+            <column name="team1_score" valueNumeric="13"/>
+            <column name="team2_score" valueNumeric="11"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="20260523_002c" author="statstracker">
+        <validCheckSum>ANY</validCheckSum>
+        <comment>Seed player stats for match 1: MIRAGE 13:7 (TEAM1: Bakyt, Mave, rdlf, blexn26, Fr1do)</comment>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'Bakyt')"/>
+            <column name="match_id" valueComputed="(SELECT match_id FROM match WHERE map = 'MIRAGE' AND played_at = '2026-05-01')"/>
+            <column name="team" value="TEAM1"/>
+            <column name="kills" valueNumeric="28"/>
+            <column name="deaths" valueNumeric="14"/>
+            <column name="assists" valueNumeric="5"/>
+            <column name="damage" valueNumeric="1970"/>
+            <column name="adr" valueNumeric="98.5"/>
+            <column name="hs_percentage" valueNumeric="52.3"/>
+            <column name="hltv_rating" valueNumeric="1.42"/>
+        </insert>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'Mave')"/>
+            <column name="match_id" valueComputed="(SELECT match_id FROM match WHERE map = 'MIRAGE' AND played_at = '2026-05-01')"/>
+            <column name="team" value="TEAM1"/>
+            <column name="kills" valueNumeric="25"/>
+            <column name="deaths" valueNumeric="16"/>
+            <column name="assists" valueNumeric="4"/>
+            <column name="damage" valueNumeric="1820"/>
+            <column name="adr" valueNumeric="91.0"/>
+            <column name="hs_percentage" valueNumeric="48.7"/>
+            <column name="hltv_rating" valueNumeric="1.31"/>
+        </insert>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'rdlf')"/>
+            <column name="match_id" valueComputed="(SELECT match_id FROM match WHERE map = 'MIRAGE' AND played_at = '2026-05-01')"/>
+            <column name="team" value="TEAM1"/>
+            <column name="kills" valueNumeric="22"/>
+            <column name="deaths" valueNumeric="17"/>
+            <column name="assists" valueNumeric="6"/>
+            <column name="damage" valueNumeric="1640"/>
+            <column name="adr" valueNumeric="82.0"/>
+            <column name="hs_percentage" valueNumeric="44.0"/>
+            <column name="hltv_rating" valueNumeric="1.17"/>
+        </insert>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'blexn26')"/>
+            <column name="match_id" valueComputed="(SELECT match_id FROM match WHERE map = 'MIRAGE' AND played_at = '2026-05-01')"/>
+            <column name="team" value="TEAM1"/>
+            <column name="kills" valueNumeric="18"/>
+            <column name="deaths" valueNumeric="18"/>
+            <column name="assists" valueNumeric="7"/>
+            <column name="damage" valueNumeric="1480"/>
+            <column name="adr" valueNumeric="74.0"/>
+            <column name="hs_percentage" valueNumeric="42.0"/>
+            <column name="hltv_rating" valueNumeric="1.02"/>
+        </insert>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'Fr1do')"/>
+            <column name="match_id" valueComputed="(SELECT match_id FROM match WHERE map = 'MIRAGE' AND played_at = '2026-05-01')"/>
+            <column name="team" value="TEAM1"/>
+            <column name="kills" valueNumeric="16"/>
+            <column name="deaths" valueNumeric="19"/>
+            <column name="assists" valueNumeric="8"/>
+            <column name="damage" valueNumeric="1360"/>
+            <column name="adr" valueNumeric="68.0"/>
+            <column name="hs_percentage" valueNumeric="38.5"/>
+            <column name="hltv_rating" valueNumeric="0.91"/>
+        </insert>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'KiRT4P')"/>
+            <column name="match_id" valueComputed="(SELECT match_id FROM match WHERE map = 'MIRAGE' AND played_at = '2026-05-01')"/>
+            <column name="team" value="TEAM2"/>
+            <column name="kills" valueNumeric="21"/>
+            <column name="deaths" valueNumeric="19"/>
+            <column name="assists" valueNumeric="5"/>
+            <column name="damage" valueNumeric="1600"/>
+            <column name="adr" valueNumeric="80.0"/>
+            <column name="hs_percentage" valueNumeric="35.0"/>
+            <column name="hltv_rating" valueNumeric="1.05"/>
+        </insert>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'Platina 10')"/>
+            <column name="match_id" valueComputed="(SELECT match_id FROM match WHERE map = 'MIRAGE' AND played_at = '2026-05-01')"/>
+            <column name="team" value="TEAM2"/>
+            <column name="kills" valueNumeric="19"/>
+            <column name="deaths" valueNumeric="18"/>
+            <column name="assists" valueNumeric="6"/>
+            <column name="damage" valueNumeric="1500"/>
+            <column name="adr" valueNumeric="75.0"/>
+            <column name="hs_percentage" valueNumeric="40.0"/>
+            <column name="hltv_rating" valueNumeric="0.98"/>
+        </insert>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'npol20')"/>
+            <column name="match_id" valueComputed="(SELECT match_id FROM match WHERE map = 'MIRAGE' AND played_at = '2026-05-01')"/>
+            <column name="team" value="TEAM2"/>
+            <column name="kills" valueNumeric="16"/>
+            <column name="deaths" valueNumeric="18"/>
+            <column name="assists" valueNumeric="9"/>
+            <column name="damage" valueNumeric="1400"/>
+            <column name="adr" valueNumeric="70.0"/>
+            <column name="hs_percentage" valueNumeric="30.0"/>
+            <column name="hltv_rating" valueNumeric="0.92"/>
+        </insert>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'BillyB')"/>
+            <column name="match_id" valueComputed="(SELECT match_id FROM match WHERE map = 'MIRAGE' AND played_at = '2026-05-01')"/>
+            <column name="team" value="TEAM2"/>
+            <column name="kills" valueNumeric="18"/>
+            <column name="deaths" valueNumeric="20"/>
+            <column name="assists" valueNumeric="7"/>
+            <column name="damage" valueNumeric="1440"/>
+            <column name="adr" valueNumeric="72.0"/>
+            <column name="hs_percentage" valueNumeric="36.0"/>
+            <column name="hltv_rating" valueNumeric="0.88"/>
+        </insert>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'Mr. Flash')"/>
+            <column name="match_id" valueComputed="(SELECT match_id FROM match WHERE map = 'MIRAGE' AND played_at = '2026-05-01')"/>
+            <column name="team" value="TEAM2"/>
+            <column name="kills" valueNumeric="14"/>
+            <column name="deaths" valueNumeric="21"/>
+            <column name="assists" valueNumeric="10"/>
+            <column name="damage" valueNumeric="1300"/>
+            <column name="adr" valueNumeric="65.0"/>
+            <column name="hs_percentage" valueNumeric="32.0"/>
+            <column name="hltv_rating" valueNumeric="0.75"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="20260523_002d" author="statstracker">
+        <validCheckSum>ANY</validCheckSum>
+        <comment>Seed player stats for match 2: INFERNO 16:12 (TEAM1: KiRT4P, Platina10, npol20, BillyB, MrFlash)</comment>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'KiRT4P')"/>
+            <column name="match_id" valueComputed="(SELECT match_id FROM match WHERE map = 'INFERNO' AND played_at = '2026-05-08')"/>
+            <column name="team" value="TEAM1"/>
+            <column name="kills" valueNumeric="24"/>
+            <column name="deaths" valueNumeric="15"/>
+            <column name="assists" valueNumeric="5"/>
+            <column name="damage" valueNumeric="2492"/>
+            <column name="adr" valueNumeric="89.0"/>
+            <column name="hs_percentage" valueNumeric="38.0"/>
+            <column name="hltv_rating" valueNumeric="1.32"/>
+        </insert>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'Platina 10')"/>
+            <column name="match_id" valueComputed="(SELECT match_id FROM match WHERE map = 'INFERNO' AND played_at = '2026-05-08')"/>
+            <column name="team" value="TEAM1"/>
+            <column name="kills" valueNumeric="22"/>
+            <column name="deaths" valueNumeric="16"/>
+            <column name="assists" valueNumeric="7"/>
+            <column name="damage" valueNumeric="2352"/>
+            <column name="adr" valueNumeric="84.0"/>
+            <column name="hs_percentage" valueNumeric="42.0"/>
+            <column name="hltv_rating" valueNumeric="1.22"/>
+        </insert>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'npol20')"/>
+            <column name="match_id" valueComputed="(SELECT match_id FROM match WHERE map = 'INFERNO' AND played_at = '2026-05-08')"/>
+            <column name="team" value="TEAM1"/>
+            <column name="kills" valueNumeric="20"/>
+            <column name="deaths" valueNumeric="17"/>
+            <column name="assists" valueNumeric="8"/>
+            <column name="damage" valueNumeric="2184"/>
+            <column name="adr" valueNumeric="78.0"/>
+            <column name="hs_percentage" valueNumeric="30.0"/>
+            <column name="hltv_rating" valueNumeric="1.12"/>
+        </insert>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'BillyB')"/>
+            <column name="match_id" valueComputed="(SELECT match_id FROM match WHERE map = 'INFERNO' AND played_at = '2026-05-08')"/>
+            <column name="team" value="TEAM1"/>
+            <column name="kills" valueNumeric="21"/>
+            <column name="deaths" valueNumeric="18"/>
+            <column name="assists" valueNumeric="6"/>
+            <column name="damage" valueNumeric="2212"/>
+            <column name="adr" valueNumeric="79.0"/>
+            <column name="hs_percentage" valueNumeric="37.0"/>
+            <column name="hltv_rating" valueNumeric="1.08"/>
+        </insert>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'Mr. Flash')"/>
+            <column name="match_id" valueComputed="(SELECT match_id FROM match WHERE map = 'INFERNO' AND played_at = '2026-05-08')"/>
+            <column name="team" value="TEAM1"/>
+            <column name="kills" valueNumeric="18"/>
+            <column name="deaths" valueNumeric="19"/>
+            <column name="assists" valueNumeric="9"/>
+            <column name="damage" valueNumeric="2072"/>
+            <column name="adr" valueNumeric="74.0"/>
+            <column name="hs_percentage" valueNumeric="33.0"/>
+            <column name="hltv_rating" valueNumeric="0.99"/>
+        </insert>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'Bakyt')"/>
+            <column name="match_id" valueComputed="(SELECT match_id FROM match WHERE map = 'INFERNO' AND played_at = '2026-05-08')"/>
+            <column name="team" value="TEAM2"/>
+            <column name="kills" valueNumeric="26"/>
+            <column name="deaths" valueNumeric="18"/>
+            <column name="assists" valueNumeric="3"/>
+            <column name="damage" valueNumeric="2548"/>
+            <column name="adr" valueNumeric="91.0"/>
+            <column name="hs_percentage" valueNumeric="50.0"/>
+            <column name="hltv_rating" valueNumeric="1.25"/>
+        </insert>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'Mave')"/>
+            <column name="match_id" valueComputed="(SELECT match_id FROM match WHERE map = 'INFERNO' AND played_at = '2026-05-08')"/>
+            <column name="team" value="TEAM2"/>
+            <column name="kills" valueNumeric="20"/>
+            <column name="deaths" valueNumeric="20"/>
+            <column name="assists" valueNumeric="5"/>
+            <column name="damage" valueNumeric="2240"/>
+            <column name="adr" valueNumeric="80.0"/>
+            <column name="hs_percentage" valueNumeric="45.0"/>
+            <column name="hltv_rating" valueNumeric="1.05"/>
+        </insert>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'rdlf')"/>
+            <column name="match_id" valueComputed="(SELECT match_id FROM match WHERE map = 'INFERNO' AND played_at = '2026-05-08')"/>
+            <column name="team" value="TEAM2"/>
+            <column name="kills" valueNumeric="17"/>
+            <column name="deaths" valueNumeric="22"/>
+            <column name="assists" valueNumeric="7"/>
+            <column name="damage" valueNumeric="2016"/>
+            <column name="adr" valueNumeric="72.0"/>
+            <column name="hs_percentage" valueNumeric="40.0"/>
+            <column name="hltv_rating" valueNumeric="0.87"/>
+        </insert>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'blexn26')"/>
+            <column name="match_id" valueComputed="(SELECT match_id FROM match WHERE map = 'INFERNO' AND played_at = '2026-05-08')"/>
+            <column name="team" value="TEAM2"/>
+            <column name="kills" valueNumeric="15"/>
+            <column name="deaths" valueNumeric="23"/>
+            <column name="assists" valueNumeric="8"/>
+            <column name="damage" valueNumeric="1904"/>
+            <column name="adr" valueNumeric="68.0"/>
+            <column name="hs_percentage" valueNumeric="39.0"/>
+            <column name="hltv_rating" valueNumeric="0.79"/>
+        </insert>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'Fr1do')"/>
+            <column name="match_id" valueComputed="(SELECT match_id FROM match WHERE map = 'INFERNO' AND played_at = '2026-05-08')"/>
+            <column name="team" value="TEAM2"/>
+            <column name="kills" valueNumeric="13"/>
+            <column name="deaths" valueNumeric="24"/>
+            <column name="assists" valueNumeric="10"/>
+            <column name="damage" valueNumeric="1736"/>
+            <column name="adr" valueNumeric="62.0"/>
+            <column name="hs_percentage" valueNumeric="35.0"/>
+            <column name="hltv_rating" valueNumeric="0.72"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="20260523_002e" author="statstracker">
+        <validCheckSum>ANY</validCheckSum>
+        <comment>Seed player stats for match 3: ANCIENT 13:11 (TEAM1: Bakyt, Fr1do, npol20, BillyB, MrFlash)</comment>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'Bakyt')"/>
+            <column name="match_id" valueComputed="(SELECT match_id FROM match WHERE map = 'ANCIENT' AND played_at = '2026-05-15')"/>
+            <column name="team" value="TEAM1"/>
+            <column name="kills" valueNumeric="27"/>
+            <column name="deaths" valueNumeric="13"/>
+            <column name="assists" valueNumeric="4"/>
+            <column name="damage" valueNumeric="2304"/>
+            <column name="adr" valueNumeric="96.0"/>
+            <column name="hs_percentage" valueNumeric="55.0"/>
+            <column name="hltv_rating" valueNumeric="1.44"/>
+        </insert>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'Fr1do')"/>
+            <column name="match_id" valueComputed="(SELECT match_id FROM match WHERE map = 'ANCIENT' AND played_at = '2026-05-15')"/>
+            <column name="team" value="TEAM1"/>
+            <column name="kills" valueNumeric="19"/>
+            <column name="deaths" valueNumeric="17"/>
+            <column name="assists" valueNumeric="8"/>
+            <column name="damage" valueNumeric="1824"/>
+            <column name="adr" valueNumeric="76.0"/>
+            <column name="hs_percentage" valueNumeric="40.0"/>
+            <column name="hltv_rating" valueNumeric="1.08"/>
+        </insert>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'npol20')"/>
+            <column name="match_id" valueComputed="(SELECT match_id FROM match WHERE map = 'ANCIENT' AND played_at = '2026-05-15')"/>
+            <column name="team" value="TEAM1"/>
+            <column name="kills" valueNumeric="17"/>
+            <column name="deaths" valueNumeric="18"/>
+            <column name="assists" valueNumeric="9"/>
+            <column name="damage" valueNumeric="1704"/>
+            <column name="adr" valueNumeric="71.0"/>
+            <column name="hs_percentage" valueNumeric="31.0"/>
+            <column name="hltv_rating" valueNumeric="0.97"/>
+        </insert>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'BillyB')"/>
+            <column name="match_id" valueComputed="(SELECT match_id FROM match WHERE map = 'ANCIENT' AND played_at = '2026-05-15')"/>
+            <column name="team" value="TEAM1"/>
+            <column name="kills" valueNumeric="20"/>
+            <column name="deaths" valueNumeric="15"/>
+            <column name="assists" valueNumeric="6"/>
+            <column name="damage" valueNumeric="1968"/>
+            <column name="adr" valueNumeric="82.0"/>
+            <column name="hs_percentage" valueNumeric="38.0"/>
+            <column name="hltv_rating" valueNumeric="1.17"/>
+        </insert>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'Mr. Flash')"/>
+            <column name="match_id" valueComputed="(SELECT match_id FROM match WHERE map = 'ANCIENT' AND played_at = '2026-05-15')"/>
+            <column name="team" value="TEAM1"/>
+            <column name="kills" valueNumeric="15"/>
+            <column name="deaths" valueNumeric="20"/>
+            <column name="assists" valueNumeric="7"/>
+            <column name="damage" valueNumeric="1608"/>
+            <column name="adr" valueNumeric="67.0"/>
+            <column name="hs_percentage" valueNumeric="33.0"/>
+            <column name="hltv_rating" valueNumeric="0.88"/>
+        </insert>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'Mave')"/>
+            <column name="match_id" valueComputed="(SELECT match_id FROM match WHERE map = 'ANCIENT' AND played_at = '2026-05-15')"/>
+            <column name="team" value="TEAM2"/>
+            <column name="kills" valueNumeric="23"/>
+            <column name="deaths" valueNumeric="17"/>
+            <column name="assists" valueNumeric="5"/>
+            <column name="damage" valueNumeric="2040"/>
+            <column name="adr" valueNumeric="85.0"/>
+            <column name="hs_percentage" valueNumeric="47.0"/>
+            <column name="hltv_rating" valueNumeric="1.21"/>
+        </insert>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'KiRT4P')"/>
+            <column name="match_id" valueComputed="(SELECT match_id FROM match WHERE map = 'ANCIENT' AND played_at = '2026-05-15')"/>
+            <column name="team" value="TEAM2"/>
+            <column name="kills" valueNumeric="20"/>
+            <column name="deaths" valueNumeric="16"/>
+            <column name="assists" valueNumeric="7"/>
+            <column name="damage" valueNumeric="1872"/>
+            <column name="adr" valueNumeric="78.0"/>
+            <column name="hs_percentage" valueNumeric="36.0"/>
+            <column name="hltv_rating" valueNumeric="1.10"/>
+        </insert>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'rdlf')"/>
+            <column name="match_id" valueComputed="(SELECT match_id FROM match WHERE map = 'ANCIENT' AND played_at = '2026-05-15')"/>
+            <column name="team" value="TEAM2"/>
+            <column name="kills" valueNumeric="18"/>
+            <column name="deaths" valueNumeric="18"/>
+            <column name="assists" valueNumeric="8"/>
+            <column name="damage" valueNumeric="1752"/>
+            <column name="adr" valueNumeric="73.0"/>
+            <column name="hs_percentage" valueNumeric="42.0"/>
+            <column name="hltv_rating" valueNumeric="0.98"/>
+        </insert>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'Platina 10')"/>
+            <column name="match_id" valueComputed="(SELECT match_id FROM match WHERE map = 'ANCIENT' AND played_at = '2026-05-15')"/>
+            <column name="team" value="TEAM2"/>
+            <column name="kills" valueNumeric="16"/>
+            <column name="deaths" valueNumeric="19"/>
+            <column name="assists" valueNumeric="9"/>
+            <column name="damage" valueNumeric="1656"/>
+            <column name="adr" valueNumeric="69.0"/>
+            <column name="hs_percentage" valueNumeric="38.0"/>
+            <column name="hltv_rating" valueNumeric="0.90"/>
+        </insert>
+        <insert tableName="player_match_stats">
+            <column name="player_id" valueComputed="(SELECT player_id FROM player WHERE nickname = 'blexn26')"/>
+            <column name="match_id" valueComputed="(SELECT match_id FROM match WHERE map = 'ANCIENT' AND played_at = '2026-05-15')"/>
+            <column name="team" value="TEAM2"/>
+            <column name="kills" valueNumeric="14"/>
+            <column name="deaths" valueNumeric="21"/>
+            <column name="assists" valueNumeric="10"/>
+            <column name="damage" valueNumeric="1512"/>
+            <column name="adr" valueNumeric="63.0"/>
+            <column name="hs_percentage" valueNumeric="34.0"/>
+            <column name="hltv_rating" valueNumeric="0.79"/>
+        </insert>
+    </changeSet>
 
 </databaseChangeLog>
