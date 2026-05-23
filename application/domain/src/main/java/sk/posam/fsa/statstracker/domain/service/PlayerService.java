@@ -1,6 +1,11 @@
 package sk.posam.fsa.statstracker.domain.service;
 
+import sk.posam.fsa.statstracker.domain.Match;
+import sk.posam.fsa.statstracker.domain.MatchRepository;
 import sk.posam.fsa.statstracker.domain.Player;
+import sk.posam.fsa.statstracker.domain.PlayerDetail;
+import sk.posam.fsa.statstracker.domain.PlayerMatchHistoryEntry;
+import sk.posam.fsa.statstracker.domain.PlayerMatchStats;
 import sk.posam.fsa.statstracker.domain.PlayerRepository;
 import sk.posam.fsa.statstracker.domain.PlayerStatsRepository;
 import sk.posam.fsa.statstracker.domain.PlayerStatsSnapshot;
@@ -17,10 +22,13 @@ public class PlayerService implements PlayerFacade {
 
     private final PlayerRepository playerRepository;
     private final PlayerStatsRepository playerStatsRepository;
+    private final MatchRepository matchRepository;
 
-    public PlayerService(PlayerRepository playerRepository, PlayerStatsRepository playerStatsRepository) {
+    public PlayerService(PlayerRepository playerRepository, PlayerStatsRepository playerStatsRepository,
+            MatchRepository matchRepository) {
         this.playerRepository = playerRepository;
         this.playerStatsRepository = playerStatsRepository;
+        this.matchRepository = matchRepository;
     }
 
     @Override
@@ -53,6 +61,27 @@ public class PlayerService implements PlayerFacade {
         return players.stream()
                 .map(p -> new PlayerWithStats(p, snapMap.get(p.getId())))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public PlayerDetail getById(long id) throws StatsTrackerException {
+        Player player = playerRepository.get(id)
+                .orElseThrow(() -> new StatsTrackerException(StatsTrackerException.Type.NOT_FOUND,
+                        "Player not found: " + id));
+        List<PlayerStatsSnapshot> snapshots = playerStatsRepository.getForPlayers(List.of(id));
+        PlayerStatsSnapshot snapshot = snapshots.isEmpty() ? null : snapshots.get(0);
+        List<PlayerMatchStats> recentStats = playerStatsRepository.getForPlayer(id);
+        List<Long> matchIds = recentStats.stream()
+                .map(PlayerMatchStats::getMatchId)
+                .filter(mid -> mid != null)
+                .collect(Collectors.toList());
+        Map<Long, Match> matchMap = matchRepository.getAllByIds(matchIds).stream()
+                .collect(Collectors.toMap(Match::getId, m -> m));
+        List<PlayerMatchHistoryEntry> history = recentStats.stream()
+                .filter(s -> matchMap.containsKey(s.getMatchId()))
+                .map(s -> new PlayerMatchHistoryEntry(matchMap.get(s.getMatchId()), s))
+                .collect(Collectors.toList());
+        return new PlayerDetail(player, snapshot, history);
     }
 
     private void require(boolean valid, StatsTrackerException.Type type, String message) {

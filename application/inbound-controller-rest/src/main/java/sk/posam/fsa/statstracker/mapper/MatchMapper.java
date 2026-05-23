@@ -2,8 +2,12 @@ package sk.posam.fsa.statstracker.mapper;
 
 import org.springframework.stereotype.Component;
 import sk.posam.fsa.statstracker.domain.Match;
+import sk.posam.fsa.statstracker.domain.MatchWithStats;
+import sk.posam.fsa.statstracker.domain.PlayerInMatch;
 import sk.posam.fsa.statstracker.domain.PlayerMatchStats;
 import sk.posam.fsa.statstracker.rest.dto.CreateMatchRequestDto;
+import sk.posam.fsa.statstracker.rest.dto.MatchDetailDto;
+import sk.posam.fsa.statstracker.rest.dto.MatchPlayerStatsDto;
 import sk.posam.fsa.statstracker.rest.dto.MatchSummaryDto;
 import sk.posam.fsa.statstracker.rest.dto.PlayerStatsRequestDto;
 
@@ -55,6 +59,32 @@ public class MatchMapper {
         dto.setPlayedAt(match.getPlayedAt());
         dto.setTeam1Score(match.getTeam1Score());
         dto.setTeam2Score(match.getTeam2Score());
+        return dto;
+    }
+
+    public MatchDetailDto toDetailDto(MatchWithStats mws) {
+        if (mws == null)
+            return null;
+        Match match = mws.getMatch();
+        MatchDetailDto dto = new MatchDetailDto();
+        dto.setId(match.getId());
+        dto.setMap(match.getMap() != null ? match.getMap().name() : null);
+        dto.setPlayedAt(match.getPlayedAt());
+        dto.setTeam1Score(match.getTeam1Score());
+        dto.setTeam2Score(match.getTeam2Score());
+        dto.setTeam1Players(mws.getTeam1Players().stream().map(this::toPlayerStatsDto).toList());
+        dto.setTeam2Players(mws.getTeam2Players().stream().map(this::toPlayerStatsDto).toList());
+        return dto;
+    }
+
+    private MatchPlayerStatsDto toPlayerStatsDto(PlayerInMatch p) {
+        MatchPlayerStatsDto dto = new MatchPlayerStatsDto();
+        dto.setPlayerId(p.getPlayerId());
+        dto.setPlayerNickname(p.getPlayerNickname());
+        dto.setKills(p.getKills());
+        dto.setDeaths(p.getDeaths());
+        dto.setDamage(p.getDamage());
+        dto.setAdr(p.getAdr());
         return dto;
     }
 }

@@ -2,25 +2,61 @@ package sk.posam.fsa.statstracker.domain.service;
 
 import sk.posam.fsa.statstracker.domain.Match;
 import sk.posam.fsa.statstracker.domain.MatchRepository;
+import sk.posam.fsa.statstracker.domain.MatchWithStats;
+import sk.posam.fsa.statstracker.domain.Player;
+import sk.posam.fsa.statstracker.domain.PlayerInMatch;
 import sk.posam.fsa.statstracker.domain.PlayerMatchStats;
+import sk.posam.fsa.statstracker.domain.PlayerRepository;
 import sk.posam.fsa.statstracker.domain.PlayerStatsRepository;
 import sk.posam.fsa.statstracker.domain.StatsTrackerException;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class MatchService implements MatchFacade {
 
     private final MatchRepository matchRepository;
     private final PlayerStatsRepository playerStatsRepository;
+    private final PlayerRepository playerRepository;
 
-    public MatchService(MatchRepository matchRepository, PlayerStatsRepository playerStatsRepository) {
+    public MatchService(MatchRepository matchRepository, PlayerStatsRepository playerStatsRepository,
+            PlayerRepository playerRepository) {
         this.matchRepository = matchRepository;
         this.playerStatsRepository = playerStatsRepository;
+        this.playerRepository = playerRepository;
     }
 
     @Override
     public List<Match> getAll() {
         return matchRepository.getAll();
+    }
+
+    @Override
+    public MatchWithStats getById(long id) throws StatsTrackerException {
+        Match match = matchRepository.get(id)
+                .orElseThrow(() -> new StatsTrackerException(StatsTrackerException.Type.NOT_FOUND,
+                        "Match not found: " + id));
+        List<PlayerMatchStats> allStats = playerStatsRepository.getForMatch(id);
+        List<Long> playerIds = allStats.stream().map(PlayerMatchStats::getPlayerId).distinct()
+                .collect(Collectors.toList());
+        Map<Long, Player> playerMap = playerRepository.getByIds(playerIds).stream()
+                .collect(Collectors.toMap(Player::getId, p -> p));
+        List<PlayerInMatch> team1 = allStats.stream()
+                .filter(s -> "TEAM1".equals(s.getTeam()))
+                .map(s -> toPlayerInMatch(s, playerMap))
+                .collect(Collectors.toList());
+        List<PlayerInMatch> team2 = allStats.stream()
+                .filter(s -> "TEAM2".equals(s.getTeam()))
+                .map(s -> toPlayerInMatch(s, playerMap))
+                .collect(Collectors.toList());
+        return new MatchWithStats(match, team1, team2);
+    }
+
+    private PlayerInMatch toPlayerInMatch(PlayerMatchStats s, Map<Long, Player> playerMap) {
+        Player player = playerMap.get(s.getPlayerId());
+        String nickname = player != null ? player.getNickname() : "Unknown";
+        return new PlayerInMatch(s.getPlayerId(), nickname, s.getKills(), s.getDeaths(), s.getDamage(), s.getAdr());
     }
 
     @Override

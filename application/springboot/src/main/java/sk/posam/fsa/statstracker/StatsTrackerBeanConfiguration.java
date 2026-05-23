@@ -23,8 +23,9 @@ public class StatsTrackerBeanConfiguration {
 
     @Bean
     public PlayerFacade playerFacade(PlayerRepository playerRepository,
-            PlayerStatsRepository playerStatsRepository) {
-        return new PlayerService(playerRepository, playerStatsRepository);
+            PlayerStatsRepository playerStatsRepository,
+            MatchRepository matchRepository) {
+        return new PlayerService(playerRepository, playerStatsRepository, matchRepository);
     }
 
     @Bean
@@ -35,7 +36,8 @@ public class StatsTrackerBeanConfiguration {
 
     @Bean
     public MatchFacade matchFacade(MatchRepository matchRepository,
-            PlayerStatsRepository playerStatsRepository) {
-        return new MatchService(matchRepository, playerStatsRepository);
+            PlayerStatsRepository playerStatsRepository,
+            PlayerRepository playerRepository) {
+        return new MatchService(matchRepository, playerStatsRepository, playerRepository);
     }
 }

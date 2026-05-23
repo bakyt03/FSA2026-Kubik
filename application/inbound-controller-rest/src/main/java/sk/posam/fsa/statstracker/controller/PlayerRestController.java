@@ -5,8 +5,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import sk.posam.fsa.statstracker.rest.api.PlayersApi;
 import sk.posam.fsa.statstracker.rest.dto.CreatePlayerRequestDto;
+import sk.posam.fsa.statstracker.rest.dto.PlayerDetailDto;
 import sk.posam.fsa.statstracker.rest.dto.PlayerSummaryDto;
 import sk.posam.fsa.statstracker.domain.Player;
+import sk.posam.fsa.statstracker.domain.StatsTrackerException;
 import sk.posam.fsa.statstracker.domain.service.PlayerFacade;
 import sk.posam.fsa.statstracker.mapper.PlayerMapper;
 
@@ -29,6 +31,15 @@ public class PlayerRestController implements PlayersApi {
                 playerFacade.findAllWithStats().stream()
                         .map(playerMapper::toDto)
                         .toList());
+    }
+
+    @Override
+    public ResponseEntity<PlayerDetailDto> getPlayer(Long id) {
+        try {
+            return ResponseEntity.ok(playerMapper.toDetailDto(playerFacade.getById(id)));
+        } catch (StatsTrackerException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @Override

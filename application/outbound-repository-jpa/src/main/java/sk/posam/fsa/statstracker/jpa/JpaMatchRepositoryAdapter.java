@@ -27,6 +27,13 @@ public class JpaMatchRepositoryAdapter implements MatchRepository {
     }
 
     @Override
+    public List<Match> getAllByIds(List<Long> ids) {
+        if (ids == null || ids.isEmpty())
+            return List.of();
+        return matchSpringDataRepository.findAllByIdIn(ids);
+    }
+
+    @Override
     public Match create(Match match) {
         return matchSpringDataRepository.save(match);
     }

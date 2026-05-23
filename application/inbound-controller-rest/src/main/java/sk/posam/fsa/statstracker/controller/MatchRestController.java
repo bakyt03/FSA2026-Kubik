@@ -5,7 +5,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import sk.posam.fsa.statstracker.rest.api.MatchesApi;
 import sk.posam.fsa.statstracker.rest.dto.CreateMatchRequestDto;
+import sk.posam.fsa.statstracker.rest.dto.MatchDetailDto;
 import sk.posam.fsa.statstracker.rest.dto.MatchSummaryDto;
+import sk.posam.fsa.statstracker.domain.StatsTrackerException;
 import sk.posam.fsa.statstracker.domain.service.MatchFacade;
 import sk.posam.fsa.statstracker.mapper.MatchMapper;
 
@@ -28,6 +30,15 @@ public class MatchRestController implements MatchesApi {
                 matchFacade.getAll().stream()
                         .map(matchMapper::toDto)
                         .toList());
+    }
+
+    @Override
+    public ResponseEntity<MatchDetailDto> getMatch(Long id) {
+        try {
+            return ResponseEntity.ok(matchMapper.toDetailDto(matchFacade.getById(id)));
+        } catch (StatsTrackerException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @Override

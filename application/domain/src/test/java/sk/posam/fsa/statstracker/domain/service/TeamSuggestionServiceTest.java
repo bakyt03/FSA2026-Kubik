@@ -85,7 +85,7 @@ class TeamSuggestionServiceTest {
         List<PlayerStatsSnapshot> snapshots = snapshotsWithHistory(players);
 
         when(playerRepository.getByIds(ids)).thenReturn(players);
-        when(playerStatsRepository.getForPlayers(eq(ids), eq(15))).thenReturn(snapshots);
+        when(playerStatsRepository.getForPlayers(eq(ids), eq(20))).thenReturn(snapshots);
         when(teamBalancer.generateSuggestions(any(), any())).thenReturn(
                 List.of(suggestion(0.5), suggestion(0.9), suggestion(0.7), suggestion(0.3)));
 
@@ -109,7 +109,7 @@ class TeamSuggestionServiceTest {
         snapshots.get(0).setAvgHltvRating(0.0);
 
         when(playerRepository.getByIds(ids)).thenReturn(players);
-        when(playerStatsRepository.getForPlayers(eq(ids), eq(15))).thenReturn(snapshots);
+        when(playerStatsRepository.getForPlayers(eq(ids), eq(20))).thenReturn(snapshots);
         when(teamBalancer.generateSuggestions(any(), any())).thenReturn(
                 List.of(suggestion(1.0), suggestion(0.9), suggestion(0.8)));
 
@@ -131,7 +131,7 @@ class TeamSuggestionServiceTest {
         noHistorySnapshot.setAvgHltvRating(0.0);
 
         when(playerRepository.getByIds(ids)).thenReturn(players);
-        when(playerStatsRepository.getForPlayers(eq(ids), eq(15))).thenReturn(snapshots);
+        when(playerStatsRepository.getForPlayers(eq(ids), eq(20))).thenReturn(snapshots);
         when(teamBalancer.generateSuggestions(any(), any())).thenReturn(
                 List.of(suggestion(1.0), suggestion(0.9), suggestion(0.8)));
 

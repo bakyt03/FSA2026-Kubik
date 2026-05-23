@@ -1,5 +1,6 @@
 package sk.posam.fsa.statstracker.jpa;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,4 +26,8 @@ public interface PlayerMatchStatsSpringDataRepository extends JpaRepository<Play
      */
     @Query("SELECT s FROM PlayerMatchStats s WHERE s.playerId IN :playerIds ORDER BY s.playerId ASC, s.id DESC")
     List<PlayerMatchStats> findAllByPlayerIdInOrderByIdDesc(@Param("playerIds") List<Long> playerIds);
+
+    List<PlayerMatchStats> findByMatchId(Long matchId);
+
+    List<PlayerMatchStats> findByPlayerIdOrderByIdDesc(Long playerId, Pageable pageable);
 }

@@ -1,6 +1,7 @@
 package sk.posam.fsa.statstracker.domain.service;
 
 import sk.posam.fsa.statstracker.domain.Player;
+import sk.posam.fsa.statstracker.domain.PlayerDetail;
 import sk.posam.fsa.statstracker.domain.PlayerWithStats;
 import sk.posam.fsa.statstracker.domain.StatsTrackerException;
 
@@ -29,4 +30,6 @@ public interface PlayerFacade {
      * Vráti všetkých hráčov spolu s ich agregovanými štatistikami.
      */
     List<PlayerWithStats> findAllWithStats();
+
+    PlayerDetail getById(long id) throws StatsTrackerException;
 }

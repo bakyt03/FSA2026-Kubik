@@ -22,5 +22,9 @@ public interface PlayerStatsRepository {
      */
     List<PlayerStatsSnapshot> getForPlayers(List<Long> playerIds, int recentMatchesLimit);
 
+    List<PlayerMatchStats> getForMatch(long matchId);
+
+    List<PlayerMatchStats> getForPlayer(long playerId);
+
     void create(PlayerMatchStats stats);
 }

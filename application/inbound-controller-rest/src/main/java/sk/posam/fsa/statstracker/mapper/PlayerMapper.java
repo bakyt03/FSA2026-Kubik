@@ -2,8 +2,13 @@ package sk.posam.fsa.statstracker.mapper;
 
 import org.springframework.stereotype.Component;
 import sk.posam.fsa.statstracker.rest.dto.CreatePlayerRequestDto;
+import sk.posam.fsa.statstracker.rest.dto.PlayerDetailDto;
+import sk.posam.fsa.statstracker.rest.dto.PlayerMatchHistoryEntryDto;
 import sk.posam.fsa.statstracker.rest.dto.PlayerSummaryDto;
+import sk.posam.fsa.statstracker.domain.Match;
 import sk.posam.fsa.statstracker.domain.Player;
+import sk.posam.fsa.statstracker.domain.PlayerDetail;
+import sk.posam.fsa.statstracker.domain.PlayerMatchHistoryEntry;
 import sk.posam.fsa.statstracker.domain.PlayerStatsSnapshot;
 import sk.posam.fsa.statstracker.domain.PlayerWithStats;
 
@@ -44,6 +49,41 @@ public class PlayerMapper {
             dto.setAvgDeaths(s.getAvgDeaths());
             dto.setAvgAdr(s.getAvgAdr());
         }
+        return dto;
+    }
+
+    public PlayerDetailDto toDetailDto(PlayerDetail pd) {
+        if (pd == null)
+            return null;
+        PlayerDetailDto dto = new PlayerDetailDto();
+        Player player = pd.getPlayer();
+        dto.setId(player.getId());
+        dto.setName(player.getName());
+        dto.setNickname(player.getNickname());
+        PlayerStatsSnapshot s = pd.getStats();
+        if (s != null) {
+            dto.setMatchesPlayed(s.getMatchesPlayed());
+            dto.setAvgKills(s.getAvgKills());
+            dto.setAvgDeaths(s.getAvgDeaths());
+            dto.setAvgAdr(s.getAvgAdr());
+        }
+        dto.setRecentMatches(pd.getRecentMatches().stream().map(this::toHistoryEntryDto).toList());
+        return dto;
+    }
+
+    private PlayerMatchHistoryEntryDto toHistoryEntryDto(PlayerMatchHistoryEntry entry) {
+        PlayerMatchHistoryEntryDto dto = new PlayerMatchHistoryEntryDto();
+        Match match = entry.getMatch();
+        dto.setMatchId(match.getId());
+        dto.setMap(match.getMap() != null ? match.getMap().name() : null);
+        dto.setPlayedAt(match.getPlayedAt());
+        dto.setTeam1Score(match.getTeam1Score());
+        dto.setTeam2Score(match.getTeam2Score());
+        dto.setPlayerTeam(entry.getStats().getTeam());
+        dto.setKills(entry.getStats().getKills());
+        dto.setDeaths(entry.getStats().getDeaths());
+        dto.setDamage(entry.getStats().getDamage());
+        dto.setAdr(entry.getStats().getAdr());
         return dto;
     }
 }

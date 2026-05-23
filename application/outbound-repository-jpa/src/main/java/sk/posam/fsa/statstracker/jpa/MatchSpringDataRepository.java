@@ -8,4 +8,6 @@ import java.util.List;
 public interface MatchSpringDataRepository extends JpaRepository<Match, Long> {
 
     List<Match> findAllByOrderByPlayedAtDesc();
+
+    List<Match> findAllByIdIn(List<Long> ids);
 }
