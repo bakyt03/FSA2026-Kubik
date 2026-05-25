@@ -22,6 +22,8 @@ services:
     command: ["start-dev"]
     ports:
       - "8081:8080"
+    volumes:
+      - ./.keycloak/themes/fsa-theme:/opt/keycloak/themes/fsa-theme
     networks:
       - fsa-network
 

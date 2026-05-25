@@ -213,6 +213,52 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
 
+  /users:
+    post:
+      summary: Vytvorenie nového používateľa (len ADMIN)
+      operationId: createUser
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserCreateRequest"
+      responses:
+        "201":
+          description: Používateľ úspešne vytvorený
+        "400":
+          description: Bad Request – neplatné pole
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden – vyžaduje sa rola ADMIN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Conflict – e-mail je už zaregistrovaný
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
   /team-suggestions:
     post:
       summary: Generovanie návrhov vyrovnaných tímov (UC4)
@@ -317,6 +363,20 @@ components:
         nickname:
           type: string
           minLength: 1
+
+    # ── User ──────────────────────────────────────────────────────────────────
+    UserCreateRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
 
     # ── Team Suggestion ───────────────────────────────────────────────────────
     TeamSuggestionRequest:

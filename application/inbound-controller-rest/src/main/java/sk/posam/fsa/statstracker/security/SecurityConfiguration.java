@@ -25,7 +25,11 @@ class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/**").permitAll()
-                        // All API endpoints require a valid JWT
+                        // Public read-only access
+                        .requestMatchers(HttpMethod.GET, "/**").permitAll()
+                        // User management requires ADMIN role
+                        .requestMatchers(HttpMethod.POST, "/users").hasRole("ADMIN")
+                        // All write operations require authentication
                         .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(restSecurityExceptionHandler)
