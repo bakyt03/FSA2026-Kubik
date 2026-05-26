@@ -5,4 +5,5 @@
     <include file="objects/statstracker_tables_changelog_1.0.xml" relativeToChangelogFile="true"/>
     <include file="objects/statstracker_tables_changelog_1.1.xml" relativeToChangelogFile="true"/>
     <include file="objects/statstracker_tables_changelog_1.2.xml" relativeToChangelogFile="true"/>
+    <include file="objects/statstracker_tables_changelog_1.3.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

@@ -21,6 +21,9 @@
             <basic name="nickname">
                 <column name="nickname" nullable="false"/>
             </basic>
+            <basic name="keycloakId">
+                <column name="keycloak_id" nullable="true"/>
+            </basic>
         </attributes>
     </entity>
 

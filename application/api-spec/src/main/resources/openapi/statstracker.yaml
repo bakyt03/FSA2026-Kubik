@@ -9,6 +9,112 @@ security:
   - bearerAuth: []
 
 paths:
+  /players/me:
+    get:
+      summary: Získanie detailu prihláseného hráča
+      operationId: getMyPlayer
+      tags:
+        - Player
+      responses:
+        "200":
+          description: Detail hráča prepojeného s prihlásením
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlayerMeDetail"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Žiadny hráč nie je prepojený s týmto účtom
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /players/{id}/link-user:
+    patch:
+      summary: Prepojenie hráča s Keycloak účtom (len ADMIN)
+      operationId: linkPlayerToUser
+      tags:
+        - Player
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LinkUserRequest"
+      responses:
+        "200":
+          description: Prepojenie úspešné
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden – vyžaduje sa rola ADMIN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Hráč neexistuje
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Keycloak účet je už prepojený s iným hráčom
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      summary: Zrušenie prepojenia hráča s Keycloak účtom (len ADMIN)
+      operationId: unlinkPlayerFromUser
+      tags:
+        - Player
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "204":
+          description: Prepojenie zrušené
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden – vyžaduje sa rola ADMIN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Hráč neexistuje
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
   /players:
     get:
       summary: Získanie zoznamu všetkých hráčov
@@ -214,6 +320,32 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
 
   /users:
+    get:
+      summary: Zoznam Keycloak používateľov (len ADMIN)
+      operationId: listUsers
+      tags:
+        - User
+      responses:
+        "200":
+          description: Zoznam používateľov
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/KeycloakUserDto"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden – vyžaduje sa rola ADMIN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
     post:
       summary: Vytvorenie nového používateľa (len ADMIN)
       operationId: createUser
@@ -350,6 +482,10 @@ components:
         avgAdr:
           type: number
           format: double
+        keycloakId:
+          type: string
+          nullable: true
+          description: Keycloak subject UUID linked to this player, null if not linked
 
     CreatePlayerRequest:
       type: object
@@ -564,6 +700,10 @@ components:
         avgAdr:
           type: number
           format: double
+        keycloakId:
+          type: string
+          nullable: true
+          description: Keycloak subject UUID linked to this player, null if not linked
         recentMatches:
           type: array
           items:
@@ -595,3 +735,54 @@ components:
         adr:
           type: number
           format: double
+
+    # ── Player Me Detail ──────────────────────────────────────────────────────
+    PlayerMeDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        nickname:
+          type: string
+        matchesPlayed:
+          type: integer
+        avgKills:
+          type: number
+          format: double
+        avgDeaths:
+          type: number
+          format: double
+        avgAdr:
+          type: number
+          format: double
+        rank:
+          type: integer
+          description: Poradie hráča podľa ADR medzi hráčmi s aspoň 1 zápasom
+        recentMatches:
+          type: array
+          items:
+            $ref: "#/components/schemas/PlayerMatchHistoryEntry"
+
+    # ── Link User Request ─────────────────────────────────────────────────────
+    LinkUserRequest:
+      type: object
+      required:
+        - keycloakId
+      properties:
+        keycloakId:
+          type: string
+
+    # ── Keycloak User ─────────────────────────────────────────────────────────
+    KeycloakUserDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Keycloak subject (UUID)
+        username:
+          type: string
+        email:
+          type: string
