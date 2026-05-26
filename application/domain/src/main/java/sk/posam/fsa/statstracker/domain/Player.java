@@ -7,6 +7,7 @@ public class Player {
     private Long id;
     private String name;
     private String nickname;
+    private String keycloakId;
 
     public Long getId() {
         return id;
@@ -31,13 +32,23 @@ public class Player {
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
-    
+
+    public String getKeycloakId() {
+        return keycloakId;
+    }
+
+    public void setKeycloakId(String keycloakId) {
+        this.keycloakId = keycloakId;
+    }
+
     public void validateForCreation() {
         if (!HasNonEmptyNamePredicate.INSTANCE.test(this)) {
-            throw new StatsTrackerException(StatsTrackerException.Type.VALIDATION, "Player name must not be null or empty");
+            throw new StatsTrackerException(StatsTrackerException.Type.VALIDATION,
+                    "Player name must not be null or empty");
         }
         if (!HasNonEmptyNicknamePredicate.INSTANCE.test(this)) {
-            throw new StatsTrackerException(StatsTrackerException.Type.VALIDATION, "Player nickname must not be null or empty");
+            throw new StatsTrackerException(StatsTrackerException.Type.VALIDATION,
+                    "Player nickname must not be null or empty");
         }
     }
 }

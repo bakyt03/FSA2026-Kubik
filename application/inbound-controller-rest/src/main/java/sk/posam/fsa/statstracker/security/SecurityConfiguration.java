@@ -25,10 +25,16 @@ class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/**").permitAll()
-                        // Public read-only access
-                        .requestMatchers(HttpMethod.GET, "/**").permitAll()
+                        // Player linking – ADMIN only
+                        .requestMatchers(HttpMethod.PATCH, "/players/*/link-user").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/players/*/link-user").hasRole("ADMIN")
                         // User management requires ADMIN role
                         .requestMatchers(HttpMethod.POST, "/users").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
+                        // Personalized endpoint requires authentication
+                        .requestMatchers(HttpMethod.GET, "/players/me").authenticated()
+                        // Public read-only access
+                        .requestMatchers(HttpMethod.GET, "/**").permitAll()
                         // All write operations require authentication
                         .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex

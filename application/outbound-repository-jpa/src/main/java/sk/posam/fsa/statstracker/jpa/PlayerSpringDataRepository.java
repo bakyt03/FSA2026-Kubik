@@ -12,4 +12,6 @@ import java.util.Optional;
 public interface PlayerSpringDataRepository extends JpaRepository<Player, Long> {
 
     Optional<Player> findByNickname(String nickname);
+
+    Optional<Player> findByKeycloakId(String keycloakId);
 }

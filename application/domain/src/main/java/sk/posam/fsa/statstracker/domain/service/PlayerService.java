@@ -6,6 +6,7 @@ import sk.posam.fsa.statstracker.domain.Player;
 import sk.posam.fsa.statstracker.domain.PlayerDetail;
 import sk.posam.fsa.statstracker.domain.PlayerMatchHistoryEntry;
 import sk.posam.fsa.statstracker.domain.PlayerMatchStats;
+import sk.posam.fsa.statstracker.domain.PlayerMeDetail;
 import sk.posam.fsa.statstracker.domain.PlayerRepository;
 import sk.posam.fsa.statstracker.domain.PlayerStatsRepository;
 import sk.posam.fsa.statstracker.domain.PlayerStatsSnapshot;
@@ -68,6 +69,59 @@ public class PlayerService implements PlayerFacade {
         Player player = playerRepository.get(id)
                 .orElseThrow(() -> new StatsTrackerException(StatsTrackerException.Type.NOT_FOUND,
                         "Player not found: " + id));
+        return buildDetail(player);
+    }
+
+    @Override
+    public void linkToUser(long playerId, String keycloakId) throws StatsTrackerException {
+        Player player = playerRepository.get(playerId)
+                .orElseThrow(() -> new StatsTrackerException(StatsTrackerException.Type.NOT_FOUND,
+                        "Player not found: " + playerId));
+        playerRepository.getByKeycloakId(keycloakId).ifPresent(existing -> {
+            if (existing.getId() != playerId) {
+                throw new StatsTrackerException(StatsTrackerException.Type.CONFLICT,
+                        "Keycloak account is already linked to another player");
+            }
+        });
+        player.setKeycloakId(keycloakId);
+        playerRepository.update(player);
+    }
+
+    @Override
+    public void unlinkUser(long playerId) throws StatsTrackerException {
+        Player player = playerRepository.get(playerId)
+                .orElseThrow(() -> new StatsTrackerException(StatsTrackerException.Type.NOT_FOUND,
+                        "Player not found: " + playerId));
+        player.setKeycloakId(null);
+        playerRepository.update(player);
+    }
+
+    @Override
+    public PlayerMeDetail getMe(String keycloakSub) throws StatsTrackerException {
+        Player player = playerRepository.getByKeycloakId(keycloakSub)
+                .orElseThrow(() -> new StatsTrackerException(StatsTrackerException.Type.NOT_FOUND,
+                        "No player linked to this account"));
+
+        PlayerDetail detail = buildDetail(player);
+
+        // Compute rank: count players with higher avgAdr (among those with ≥1 match)
+        List<Player> allPlayers = playerRepository.getAll();
+        List<Long> allIds = allPlayers.stream().map(Player::getId).collect(Collectors.toList());
+        Map<Long, PlayerStatsSnapshot> allSnapshots = playerStatsRepository.getForPlayers(allIds).stream()
+                .collect(Collectors.toMap(PlayerStatsSnapshot::getPlayerId, s -> s));
+
+        double myAdr = detail.getStats() != null ? detail.getStats().getAvgAdr() : 0.0;
+        long playersAhead = allSnapshots.values().stream()
+                .filter(s -> s.getMatchesPlayed() > 0)
+                .filter(s -> s.getAvgAdr() > myAdr)
+                .count();
+        int rank = (int) playersAhead + 1;
+
+        return new PlayerMeDetail(detail.getPlayer(), detail.getStats(), detail.getRecentMatches(), rank);
+    }
+
+    private PlayerDetail buildDetail(Player player) {
+        long id = player.getId();
         List<PlayerStatsSnapshot> snapshots = playerStatsRepository.getForPlayers(List.of(id));
         PlayerStatsSnapshot snapshot = snapshots.isEmpty() ? null : snapshots.get(0);
         List<PlayerMatchStats> recentStats = playerStatsRepository.getForPlayer(id);

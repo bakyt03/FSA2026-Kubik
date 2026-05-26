@@ -4,11 +4,13 @@ import org.springframework.stereotype.Component;
 import sk.posam.fsa.statstracker.rest.dto.CreatePlayerRequestDto;
 import sk.posam.fsa.statstracker.rest.dto.PlayerDetailDto;
 import sk.posam.fsa.statstracker.rest.dto.PlayerMatchHistoryEntryDto;
+import sk.posam.fsa.statstracker.rest.dto.PlayerMeDetailDto;
 import sk.posam.fsa.statstracker.rest.dto.PlayerSummaryDto;
 import sk.posam.fsa.statstracker.domain.Match;
 import sk.posam.fsa.statstracker.domain.Player;
 import sk.posam.fsa.statstracker.domain.PlayerDetail;
 import sk.posam.fsa.statstracker.domain.PlayerMatchHistoryEntry;
+import sk.posam.fsa.statstracker.domain.PlayerMeDetail;
 import sk.posam.fsa.statstracker.domain.PlayerStatsSnapshot;
 import sk.posam.fsa.statstracker.domain.PlayerWithStats;
 
@@ -34,6 +36,7 @@ public class PlayerMapper {
         dto.setId(player.getId());
         dto.setName(player.getName());
         dto.setNickname(player.getNickname());
+        dto.setKeycloakId(player.getKeycloakId());
 
         return dto;
     }
@@ -68,6 +71,27 @@ public class PlayerMapper {
             dto.setAvgAdr(s.getAvgAdr());
         }
         dto.setRecentMatches(pd.getRecentMatches().stream().map(this::toHistoryEntryDto).toList());
+        dto.setKeycloakId(player.getKeycloakId());
+        return dto;
+    }
+
+    public PlayerMeDetailDto toMeDetailDto(PlayerMeDetail pmd) {
+        if (pmd == null)
+            return null;
+        PlayerMeDetailDto dto = new PlayerMeDetailDto();
+        Player player = pmd.getPlayer();
+        dto.setId(player.getId());
+        dto.setName(player.getName());
+        dto.setNickname(player.getNickname());
+        PlayerStatsSnapshot s = pmd.getStats();
+        if (s != null) {
+            dto.setMatchesPlayed(s.getMatchesPlayed());
+            dto.setAvgKills(s.getAvgKills());
+            dto.setAvgDeaths(s.getAvgDeaths());
+            dto.setAvgAdr(s.getAvgAdr());
+        }
+        dto.setRank(pmd.getRank());
+        dto.setRecentMatches(pmd.getRecentMatches().stream().map(this::toHistoryEntryDto).toList());
         return dto;
     }
 

@@ -1,10 +1,12 @@
 package sk.posam.fsa.statstracker;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
+import sk.posam.fsa.statstracker.domain.KeycloakUserInfo;
 import sk.posam.fsa.statstracker.domain.UserManagementPort;
 
 import java.util.List;
@@ -34,6 +36,27 @@ public class KeycloakUserManagementAdapter implements UserManagementPort {
         String token = getAdminToken();
         String userId = createKeycloakUser(token, email, password);
         assignUserRole(token, userId);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<KeycloakUserInfo> listUsers() {
+        String token = getAdminToken();
+        List<Map<String, Object>> users = restClient.get()
+                .uri("/admin/realms/{realm}/users?max=500", realm)
+                .header("Authorization", "Bearer " + token)
+                .retrieve()
+                .body(new ParameterizedTypeReference<List<Map<String, Object>>>() {
+                });
+        if (users == null) {
+            return List.of();
+        }
+        return users.stream()
+                .map(u -> new KeycloakUserInfo(
+                        (String) u.get("id"),
+                        (String) u.getOrDefault("username", ""),
+                        (String) u.getOrDefault("email", "")))
+                .toList();
     }
 
     @SuppressWarnings("unchecked")

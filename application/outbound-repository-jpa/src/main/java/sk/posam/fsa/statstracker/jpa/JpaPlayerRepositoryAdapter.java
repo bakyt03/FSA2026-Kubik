@@ -28,6 +28,11 @@ public class JpaPlayerRepositoryAdapter implements PlayerRepository {
     }
 
     @Override
+    public Optional<Player> getByKeycloakId(String keycloakId) {
+        return springDataRepository.findByKeycloakId(keycloakId);
+    }
+
+    @Override
     public List<Player> getAll() {
         return springDataRepository.findAll();
     }
@@ -40,6 +45,12 @@ public class JpaPlayerRepositoryAdapter implements PlayerRepository {
     @Override
     @Transactional
     public void create(Player player) {
+        springDataRepository.save(player);
+    }
+
+    @Override
+    @Transactional
+    public void update(Player player) {
         springDataRepository.save(player);
     }
 }

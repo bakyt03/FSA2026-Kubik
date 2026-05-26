@@ -2,6 +2,7 @@ package sk.posam.fsa.statstracker.domain.service;
 
 import sk.posam.fsa.statstracker.domain.Player;
 import sk.posam.fsa.statstracker.domain.PlayerDetail;
+import sk.posam.fsa.statstracker.domain.PlayerMeDetail;
 import sk.posam.fsa.statstracker.domain.PlayerWithStats;
 import sk.posam.fsa.statstracker.domain.StatsTrackerException;
 
@@ -32,4 +33,28 @@ public interface PlayerFacade {
     List<PlayerWithStats> findAllWithStats();
 
     PlayerDetail getById(long id) throws StatsTrackerException;
+
+    /**
+     * Prepojí hráča s Keycloak účtom.
+     *
+     * @throws StatsTrackerException type=NOT_FOUND ak hráč neexistuje
+     * @throws StatsTrackerException type=CONFLICT ak keycloakId je už prepojené s
+     *                               iným hráčom
+     */
+    void linkToUser(long playerId, String keycloakId) throws StatsTrackerException;
+
+    /**
+     * Zruší prepojenie hráča s Keycloak účtom.
+     *
+     * @throws StatsTrackerException type=NOT_FOUND ak hráč neexistuje
+     */
+    void unlinkUser(long playerId) throws StatsTrackerException;
+
+    /**
+     * Vráti detail hráča prepojeného s daným Keycloak sub.
+     *
+     * @throws StatsTrackerException type=NOT_FOUND ak žiadny hráč nie je prepojený
+     *                               s týmto keycloakId
+     */
+    PlayerMeDetail getMe(String keycloakSub) throws StatsTrackerException;
 }
