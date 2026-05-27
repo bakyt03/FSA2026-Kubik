@@ -51,6 +51,9 @@ public class PlayerMapper {
             dto.setAvgKills(s.getAvgKills());
             dto.setAvgDeaths(s.getAvgDeaths());
             dto.setAvgAdr(s.getAvgAdr());
+            dto.setAvgKdRatio(s.getAvgKdRatio());
+            dto.setWinRate(s.getWinRate());
+            dto.setAvgKillsPerRound(s.getAvgKillsPerRound());
         }
         return dto;
     }

@@ -35,6 +35,8 @@ public class JpaPlayerStatsRepositoryAdapter implements PlayerStatsRepository {
             snap.setMatchesPlayed(((Long) row[4]).intValue());
             snap.setAvgKills((Double) row[5]);
             snap.setAvgDeaths((Double) row[6]);
+            snap.setWinRate(row[7] != null ? (Double) row[7] : 0.0);
+            snap.setAvgKillsPerRound(row[8] != null ? (Double) row[8] : 0.0);
             resultMap.put(snap.getPlayerId(), snap);
         }
 

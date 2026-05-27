@@ -35,6 +35,8 @@ class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "/players/me").authenticated()
                         // Public read-only access
                         .requestMatchers(HttpMethod.GET, "/**").permitAll()
+                        // Team suggestions is open to all
+                        .requestMatchers(HttpMethod.POST, "/team-suggestions").permitAll()
                         // All write operations require authentication
                         .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex

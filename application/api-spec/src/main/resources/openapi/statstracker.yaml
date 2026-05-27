@@ -482,6 +482,15 @@ components:
         avgAdr:
           type: number
           format: double
+        avgKdRatio:
+          type: number
+          format: double
+        winRate:
+          type: number
+          format: double
+        avgKillsPerRound:
+          type: number
+          format: double
         keycloakId:
           type: string
           nullable: true
