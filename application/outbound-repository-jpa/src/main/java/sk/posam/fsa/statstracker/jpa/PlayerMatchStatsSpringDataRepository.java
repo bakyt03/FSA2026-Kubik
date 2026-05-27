@@ -37,4 +37,8 @@ public interface PlayerMatchStatsSpringDataRepository extends JpaRepository<Play
     List<PlayerMatchStats> findByMatchId(Long matchId);
 
     List<PlayerMatchStats> findByPlayerIdOrderByIdDesc(Long playerId, Pageable pageable);
+
+    void deleteByMatchId(Long matchId);
+
+    void deleteByPlayerId(Long playerId);
 }

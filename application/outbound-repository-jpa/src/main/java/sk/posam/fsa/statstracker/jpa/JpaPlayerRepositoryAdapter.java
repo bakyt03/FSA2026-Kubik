@@ -53,4 +53,10 @@ public class JpaPlayerRepositoryAdapter implements PlayerRepository {
     public void update(Player player) {
         springDataRepository.save(player);
     }
+
+    @Override
+    @Transactional
+    public void delete(long playerId) {
+        springDataRepository.deleteById(playerId);
+    }
 }

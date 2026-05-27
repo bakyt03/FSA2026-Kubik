@@ -1,6 +1,7 @@
 package sk.posam.fsa.statstracker.domain.service;
 
 import sk.posam.fsa.statstracker.domain.KeycloakUserInfo;
+import sk.posam.fsa.statstracker.domain.PlayerRepository;
 import sk.posam.fsa.statstracker.domain.UserManagementPort;
 
 import java.util.List;
@@ -8,9 +9,11 @@ import java.util.List;
 public class UserManagementService implements UserManagementFacade {
 
     private final UserManagementPort port;
+    private final PlayerRepository playerRepository;
 
-    public UserManagementService(UserManagementPort port) {
+    public UserManagementService(UserManagementPort port, PlayerRepository playerRepository) {
         this.port = port;
+        this.playerRepository = playerRepository;
     }
 
     @Override
@@ -21,5 +24,14 @@ public class UserManagementService implements UserManagementFacade {
     @Override
     public List<KeycloakUserInfo> listUsers() {
         return port.listUsers();
+    }
+
+    @Override
+    public void deleteUser(String userId) {
+        playerRepository.getByKeycloakId(userId).ifPresent(player -> {
+            player.setKeycloakId(null);
+            playerRepository.update(player);
+        });
+        port.deleteUser(userId);
     }
 }

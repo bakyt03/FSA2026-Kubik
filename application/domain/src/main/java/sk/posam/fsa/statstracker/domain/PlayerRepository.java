@@ -17,4 +17,6 @@ public interface PlayerRepository {
     void create(Player player);
 
     void update(Player player);
+
+    void delete(long playerId);
 }

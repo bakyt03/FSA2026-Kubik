@@ -59,6 +59,16 @@ public class KeycloakUserManagementAdapter implements UserManagementPort {
                 .toList();
     }
 
+    @Override
+    public void deleteUser(String userId) {
+        String token = getAdminToken();
+        restClient.delete()
+                .uri("/admin/realms/{realm}/users/{userId}", realm, userId)
+                .header("Authorization", "Bearer " + token)
+                .retrieve()
+                .toBodilessEntity();
+    }
+
     @SuppressWarnings("unchecked")
     private String getAdminToken() {
         String formBody = "grant_type=client_credentials"

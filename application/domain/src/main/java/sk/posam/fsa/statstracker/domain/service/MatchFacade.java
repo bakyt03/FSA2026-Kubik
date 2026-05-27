@@ -19,4 +19,11 @@ public interface MatchFacade {
 
     void create(Match match, List<PlayerMatchStats> team1Stats, List<PlayerMatchStats> team2Stats)
             throws StatsTrackerException;
+
+    /**
+     * Zmaže zápas vrátane všetkých štatistík hráčov.
+     *
+     * @throws StatsTrackerException type=NOT_FOUND ak zápas neexistuje
+     */
+    void deleteMatch(long matchId) throws StatsTrackerException;
 }

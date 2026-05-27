@@ -57,4 +57,12 @@ public interface PlayerFacade {
      *                               s týmto keycloakId
      */
     PlayerMeDetail getMe(String keycloakSub) throws StatsTrackerException;
+
+    /**
+     * Zmaže hráča. Štatistiky z odohraných zápasov zostanú zachované
+     * (anonymizácia).
+     *
+     * @throws StatsTrackerException type=NOT_FOUND ak hráč neexistuje
+     */
+    void deletePlayer(long playerId) throws StatsTrackerException;
 }

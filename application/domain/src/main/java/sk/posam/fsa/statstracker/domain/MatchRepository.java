@@ -11,4 +11,6 @@ public interface MatchRepository {
     List<Match> getAllByIds(List<Long> ids);
 
     Match create(Match match);
+
+    void delete(long matchId);
 }

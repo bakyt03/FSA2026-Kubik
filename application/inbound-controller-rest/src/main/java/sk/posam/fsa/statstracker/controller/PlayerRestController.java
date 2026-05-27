@@ -75,4 +75,14 @@ public class PlayerRestController implements PlayersApi {
         playerFacade.unlinkUser(id);
         return ResponseEntity.noContent().build();
     }
+
+    @Override
+    public ResponseEntity<Void> deletePlayer(Long id) {
+        try {
+            playerFacade.deletePlayer(id);
+            return ResponseEntity.noContent().build();
+        } catch (StatsTrackerException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

@@ -40,4 +40,10 @@ public class UserManagementRestController implements UsersApi {
         dto.setEmail(info.getEmail());
         return dto;
     }
+
+    @Override
+    public ResponseEntity<Void> deleteUser(String id) {
+        userManagementFacade.deleteUser(id);
+        return ResponseEntity.noContent().build();
+    }
 }

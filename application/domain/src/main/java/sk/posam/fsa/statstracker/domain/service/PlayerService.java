@@ -138,6 +138,15 @@ public class PlayerService implements PlayerFacade {
         return new PlayerDetail(player, snapshot, history);
     }
 
+    @Override
+    public void deletePlayer(long playerId) throws StatsTrackerException {
+        playerRepository.get(playerId)
+                .orElseThrow(() -> new StatsTrackerException(StatsTrackerException.Type.NOT_FOUND,
+                        "Player not found: " + playerId));
+        playerStatsRepository.deleteByPlayerId(playerId);
+        playerRepository.delete(playerId);
+    }
+
     private void require(boolean valid, StatsTrackerException.Type type, String message) {
         if (!valid) {
             throw new StatsTrackerException(type, message);

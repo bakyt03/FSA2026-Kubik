@@ -28,6 +28,10 @@ class SecurityConfiguration {
                         // Player linking – ADMIN only
                         .requestMatchers(HttpMethod.PATCH, "/players/*/link-user").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/players/*/link-user").hasRole("ADMIN")
+                        // Player / match / user deletion – ADMIN only
+                        .requestMatchers(HttpMethod.DELETE, "/players/*").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/matches/*").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/users/*").hasRole("ADMIN")
                         // User management requires ADMIN role
                         .requestMatchers(HttpMethod.POST, "/users").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")

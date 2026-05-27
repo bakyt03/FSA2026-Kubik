@@ -45,7 +45,8 @@ public class StatsTrackerBeanConfiguration {
     }
 
     @Bean
-    public UserManagementFacade userManagementFacade(UserManagementPort userManagementPort) {
-        return new UserManagementService(userManagementPort);
+    public UserManagementFacade userManagementFacade(UserManagementPort userManagementPort,
+            PlayerRepository playerRepository) {
+        return new UserManagementService(userManagementPort, playerRepository);
     }
 }

@@ -1,6 +1,7 @@
 package sk.posam.fsa.statstracker.jpa;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import sk.posam.fsa.statstracker.domain.Match;
 import sk.posam.fsa.statstracker.domain.MatchRepository;
 
@@ -36,5 +37,11 @@ public class JpaMatchRepositoryAdapter implements MatchRepository {
     @Override
     public Match create(Match match) {
         return matchSpringDataRepository.save(match);
+    }
+
+    @Override
+    @Transactional
+    public void delete(long matchId) {
+        matchSpringDataRepository.deleteById(matchId);
     }
 }

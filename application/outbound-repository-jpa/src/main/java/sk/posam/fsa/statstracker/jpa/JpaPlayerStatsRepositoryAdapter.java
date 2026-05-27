@@ -2,6 +2,7 @@ package sk.posam.fsa.statstracker.jpa;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import sk.posam.fsa.statstracker.domain.PlayerMatchStats;
 import sk.posam.fsa.statstracker.domain.PlayerStatsRepository;
 import sk.posam.fsa.statstracker.domain.PlayerStatsSnapshot;
@@ -98,5 +99,17 @@ public class JpaPlayerStatsRepositoryAdapter implements PlayerStatsRepository {
     @Override
     public List<PlayerMatchStats> getForPlayer(long playerId) {
         return statsRepository.findByPlayerIdOrderByIdDesc(playerId, PageRequest.of(0, Integer.MAX_VALUE));
+    }
+
+    @Override
+    @Transactional
+    public void deleteByMatchId(long matchId) {
+        statsRepository.deleteByMatchId(matchId);
+    }
+
+    @Override
+    @Transactional
+    public void deleteByPlayerId(long playerId) {
+        statsRepository.deleteByPlayerId(playerId);
     }
 }

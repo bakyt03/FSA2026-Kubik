@@ -49,4 +49,14 @@ public class MatchRestController implements MatchesApi {
                 matchMapper.toTeam2Stats(createMatchRequestDto));
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    @Override
+    public ResponseEntity<Void> deleteMatch(Long id) {
+        try {
+            matchFacade.deleteMatch(id);
+            return ResponseEntity.noContent().build();
+        } catch (StatsTrackerException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

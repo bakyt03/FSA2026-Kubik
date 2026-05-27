@@ -79,6 +79,15 @@ public class MatchService implements MatchFacade {
         });
     }
 
+    @Override
+    public void deleteMatch(long matchId) throws StatsTrackerException {
+        matchRepository.get(matchId)
+                .orElseThrow(() -> new StatsTrackerException(StatsTrackerException.Type.NOT_FOUND,
+                        "Match not found: " + matchId));
+        playerStatsRepository.deleteByMatchId(matchId);
+        matchRepository.delete(matchId);
+    }
+
     private void computeAdr(PlayerMatchStats s, int totalRounds) {
         if (totalRounds > 0) {
             s.setAdr((double) s.getDamage() / totalRounds);

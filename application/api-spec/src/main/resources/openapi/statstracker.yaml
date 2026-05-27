@@ -219,6 +219,27 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      summary: Zmazanie hráča (len ADMIN)
+      operationId: deletePlayer
+      tags:
+        - Player
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "204":
+          description: Hráč zmazaný
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden – vyžaduje sa rola ADMIN
+        "404":
+          description: Hráč neexistuje
 
   /matches:
     get:
@@ -318,6 +339,27 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      summary: Zmazanie zápasu (len ADMIN)
+      operationId: deleteMatch
+      tags:
+        - Match
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "204":
+          description: Zápas zmazaný
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden – vyžaduje sa rola ADMIN
+        "404":
+          description: Zápas neexistuje
 
   /users:
     get:
@@ -390,6 +432,28 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+
+  /users/{id}:
+    delete:
+      summary: Zmazanie Keycloak používateľa (len ADMIN)
+      operationId: deleteUser
+      tags:
+        - User
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Používateľ zmazaný
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden – vyžaduje sa rola ADMIN
+        "404":
+          description: Používateľ neexistuje
 
   /team-suggestions:
     post:
