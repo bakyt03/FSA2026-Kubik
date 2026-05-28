@@ -140,8 +140,9 @@ public class KeycloakUserManagementAdapter implements UserManagementPort {
         } catch (HttpClientErrorException.Forbidden e) {
             throw new IllegalStateException(
                     "User was created but role assignment failed (403). " +
-                    "Grant the 'manage-users' and 'manage-roles' (or 'realm-admin') roles " +
-                    "to the '" + clientId + "' service account in the realm-management client.", e);
+                            "Grant the 'manage-users' and 'manage-roles' (or 'realm-admin') roles " +
+                            "to the '" + clientId + "' service account in the realm-management client.",
+                    e);
         }
     }
 }
