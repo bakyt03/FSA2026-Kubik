@@ -17,7 +17,7 @@ paths:
         - Player
       responses:
         "200":
-          description: Detail hráča prepojeného s prihlásením
+          description: Detail hráča prepojeného s prihláseným používateľom
           content:
             application/json:
               schema:
@@ -143,7 +143,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
     post:
-      summary: Pridanie nového hráča (UC1)
+      summary: Pridanie nového hráča
       operationId: createPlayer
       tags:
         - Player
@@ -236,10 +236,22 @@ paths:
           description: Hráč zmazaný
         "401":
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
         "403":
           description: Forbidden – vyžaduje sa rola ADMIN
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/ErrorResponse"
         "404":
           description: Hráč neexistuje
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 
   /players/{id}/matches:
     get:
@@ -408,10 +420,22 @@ paths:
           description: Zápas zmazaný
         "401":
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
         "403":
           description: Forbidden – vyžaduje sa rola ADMIN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
         "404":
           description: Zápas neexistuje
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/ErrorResponse"
 
   /users:
     get:
@@ -502,14 +526,26 @@ paths:
           description: Používateľ zmazaný
         "401":
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
         "403":
           description: Forbidden – vyžaduje sa rola ADMIN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
         "404":
           description: Používateľ neexistuje
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 
   /team-suggestions:
     post:
-      summary: Generovanie návrhov vyrovnaných tímov (UC4)
+      summary: Generovanie návrhov vyrovnaných tímov
       operationId: generateTeamSuggestions
       tags:
         - TeamSuggestion
@@ -575,7 +611,7 @@ components:
         path:
           type: string
 
-    # ── Player ────────────────────────────────────────────────────────────────
+    # ── Player 
     PlayerSummary:
       type: object
       properties:
@@ -625,7 +661,7 @@ components:
           type: string
           minLength: 1
 
-    # ── User ──────────────────────────────────────────────────────────────────
+    # ── User ──
     UserCreateRequest:
       type: object
       required:
@@ -647,7 +683,7 @@ components:
           type: string
           minLength: 1
 
-    # ── Team Suggestion ───────────────────────────────────────────────────────
+    # ── Team Suggestion ─
     TeamSuggestionRequest:
       type: object
       required:
@@ -708,7 +744,7 @@ components:
           items:
             $ref: "#/components/schemas/PlayerSummary"
 
-    # ── Match ─────────────────────────────────────────────────────────────────
+    # ── Match ─
     MatchSummary:
       type: object
       properties:
@@ -782,7 +818,7 @@ components:
           items:
             $ref: "#/components/schemas/PlayerStatsRequest"
 
-    # ── Match Detail ──────────────────────────────────────────────────────────
+    # ── Match Detail 
     MatchDetail:
       type: object
       properties:
@@ -825,7 +861,7 @@ components:
           type: number
           format: double
 
-    # ── Player Detail ─────────────────────────────────────────────────────────
+    # ── Player Detail 
     PlayerDetail:
       type: object
       properties:
@@ -883,7 +919,7 @@ components:
           type: number
           format: double
 
-    # ── Player Me Detail ──────────────────────────────────────────────────────
+    # ── Player Me Detail 
     PlayerMeDetail:
       type: object
       properties:
@@ -913,7 +949,7 @@ components:
           items:
             $ref: "#/components/schemas/PlayerMatchHistoryEntry"
 
-    # ── Link User Request ─────────────────────────────────────────────────────
+    # ── Link User Request
     LinkUserRequest:
       type: object
       required:
@@ -922,7 +958,7 @@ components:
         keycloakId:
           type: string
 
-    # ── Keycloak User ─────────────────────────────────────────────────────────
+    # ── Keycloak User 
     KeycloakUserDto:
       type: object
       properties:
