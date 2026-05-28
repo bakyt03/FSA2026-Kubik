@@ -9,6 +9,8 @@ import sk.posam.fsa.statstracker.domain.Match;
 import sk.posam.fsa.statstracker.domain.MatchRepository;
 import sk.posam.fsa.statstracker.domain.Player;
 import sk.posam.fsa.statstracker.domain.PlayerDetail;
+import sk.posam.fsa.statstracker.domain.PlayerMeDetail;
+import sk.posam.fsa.statstracker.domain.PlayerWithStats;
 import sk.posam.fsa.statstracker.domain.PlayerMatchHistoryEntry;
 import sk.posam.fsa.statstracker.domain.PlayerMatchStats;
 import sk.posam.fsa.statstracker.domain.PlayerRepository;
@@ -315,6 +317,147 @@ class PlayerServiceTest {
         p.setName(name);
         p.setNickname(nickname);
         return p;
+    }
+
+    // ----------------------------------------------------------------
+    // findAllWithStats
+    // ----------------------------------------------------------------
+
+    @Test
+    void findAllWithStatsReturnsEmptyListWhenNoPlayersExist() {
+        when(playerRepository.getAll()).thenReturn(List.of());
+
+        List<PlayerWithStats> result = service.findAllWithStats();
+
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    void findAllWithStatsZipsPlayersWithMatchingSnapshots() {
+        Player p1 = playerWithId(1L, "Alice", "alice");
+        Player p2 = playerWithId(2L, "Bob", "bob");
+        when(playerRepository.getAll()).thenReturn(List.of(p1, p2));
+
+        PlayerStatsSnapshot snap1 = snapshot(1L, 80.0, 5);
+        PlayerStatsSnapshot snap2 = snapshot(2L, 60.0, 3);
+        when(playerStatsRepository.getForPlayers(List.of(1L, 2L))).thenReturn(List.of(snap1, snap2));
+
+        List<PlayerWithStats> result = service.findAllWithStats();
+
+        assertEquals(2, result.size());
+        assertEquals(p1, result.get(0).getPlayer());
+        assertEquals(snap1, result.get(0).getStats());
+        assertEquals(p2, result.get(1).getPlayer());
+        assertEquals(snap2, result.get(1).getStats());
+    }
+
+    @Test
+    void findAllWithStatsReturnsNullSnapshotForPlayerWithNoStats() {
+        Player p1 = playerWithId(1L, "Alice", "alice");
+        Player p2 = playerWithId(2L, "Bob", "bob");
+        when(playerRepository.getAll()).thenReturn(List.of(p1, p2));
+        // only p1 has a snapshot
+        when(playerStatsRepository.getForPlayers(List.of(1L, 2L)))
+                .thenReturn(List.of(snapshot(1L, 80.0, 5)));
+
+        List<PlayerWithStats> result = service.findAllWithStats();
+
+        assertEquals(80.0, result.get(0).getStats().getAvgAdr(), 1e-9);
+        assertNull(result.get(1).getStats());
+    }
+
+    // ----------------------------------------------------------------
+    // getMe
+    // ----------------------------------------------------------------
+
+    @Test
+    void getMeThrowsNotFoundWhenNoPlayerLinkedToAccount() {
+        when(playerRepository.getByKeycloakId("kc-x")).thenReturn(Optional.empty());
+
+        StatsTrackerException ex = assertThrows(StatsTrackerException.class,
+                () -> service.getMe("kc-x"));
+
+        assertEquals(StatsTrackerException.Type.NOT_FOUND, ex.getType());
+    }
+
+    @Test
+    void getMeReturnsRank1WhenNoOtherPlayerHasHigherAdr() {
+        Player alice = playerWithId(1L, "Alice", "alice");
+        when(playerRepository.getByKeycloakId("kc-alice")).thenReturn(Optional.of(alice));
+
+        // buildDetail stubs
+        PlayerStatsSnapshot aliceSnap = snapshot(1L, 80.0, 5);
+        when(playerStatsRepository.getForPlayers(List.of(1L))).thenReturn(List.of(aliceSnap));
+        when(playerStatsRepository.getForPlayer(1L)).thenReturn(List.of());
+        when(matchRepository.getAllByIds(List.of())).thenReturn(List.of());
+
+        // rank computation stubs — two other players with lower ADR
+        Player bob = playerWithId(2L, "Bob", "bob");
+        Player carol = playerWithId(3L, "Carol", "carol");
+        when(playerRepository.getAll()).thenReturn(List.of(alice, bob, carol));
+        PlayerStatsSnapshot bobSnap = snapshot(2L, 70.0, 3);
+        PlayerStatsSnapshot carolSnap = snapshot(3L, 50.0, 2);
+        when(playerStatsRepository.getForPlayers(List.of(1L, 2L, 3L)))
+                .thenReturn(List.of(aliceSnap, bobSnap, carolSnap));
+
+        PlayerMeDetail me = service.getMe("kc-alice");
+
+        assertEquals(1, me.getRank());
+    }
+
+    @Test
+    void getMeReturnsCorrectRankWhenOtherPlayersRankHigher() {
+        Player alice = playerWithId(1L, "Alice", "alice");
+        when(playerRepository.getByKeycloakId("kc-alice")).thenReturn(Optional.of(alice));
+
+        // Alice has ADR 60
+        PlayerStatsSnapshot aliceSnap = snapshot(1L, 60.0, 5);
+        when(playerStatsRepository.getForPlayers(List.of(1L))).thenReturn(List.of(aliceSnap));
+        when(playerStatsRepository.getForPlayer(1L)).thenReturn(List.of());
+        when(matchRepository.getAllByIds(List.of())).thenReturn(List.of());
+
+        // Bob has ADR 80 (ranked ahead), Carol has ADR 50 (ranked behind)
+        Player bob = playerWithId(2L, "Bob", "bob");
+        Player carol = playerWithId(3L, "Carol", "carol");
+        when(playerRepository.getAll()).thenReturn(List.of(alice, bob, carol));
+        PlayerStatsSnapshot bobSnap = snapshot(2L, 80.0, 3);
+        PlayerStatsSnapshot carolSnap = snapshot(3L, 50.0, 2);
+        when(playerStatsRepository.getForPlayers(List.of(1L, 2L, 3L)))
+                .thenReturn(List.of(aliceSnap, bobSnap, carolSnap));
+
+        PlayerMeDetail me = service.getMe("kc-alice");
+
+        assertEquals(2, me.getRank()); // one player (Bob) has higher ADR
+    }
+
+    @Test
+    void getMeIgnoresPlayersWithNoMatchHistoryInRankComputation() {
+        Player alice = playerWithId(1L, "Alice", "alice");
+        when(playerRepository.getByKeycloakId("kc-alice")).thenReturn(Optional.of(alice));
+
+        PlayerStatsSnapshot aliceSnap = snapshot(1L, 60.0, 5);
+        when(playerStatsRepository.getForPlayers(List.of(1L))).thenReturn(List.of(aliceSnap));
+        when(playerStatsRepository.getForPlayer(1L)).thenReturn(List.of());
+        when(matchRepository.getAllByIds(List.of())).thenReturn(List.of());
+
+        // Dave has higher ADR (90) but 0 matches — must not count towards rank
+        Player dave = playerWithId(2L, "Dave", "dave");
+        when(playerRepository.getAll()).thenReturn(List.of(alice, dave));
+        PlayerStatsSnapshot daveSnap = snapshot(2L, 90.0, 0); // 0 matches
+        when(playerStatsRepository.getForPlayers(List.of(1L, 2L)))
+                .thenReturn(List.of(aliceSnap, daveSnap));
+
+        PlayerMeDetail me = service.getMe("kc-alice");
+
+        assertEquals(1, me.getRank()); // Dave's ADR is ignored (no matches)
+    }
+
+    private PlayerStatsSnapshot snapshot(long playerId, double avgAdr, int matchesPlayed) {
+        PlayerStatsSnapshot s = new PlayerStatsSnapshot();
+        s.setPlayerId(playerId);
+        s.setAvgAdr(avgAdr);
+        s.setMatchesPlayed(matchesPlayed);
+        return s;
     }
 
     private Player playerWithId(long id, String name, String nickname) {
