@@ -12,6 +12,7 @@ import sk.posam.fsa.statstracker.domain.PlayerStatsRepository;
 import sk.posam.fsa.statstracker.domain.PlayerStatsSnapshot;
 import sk.posam.fsa.statstracker.domain.PlayerWithStats;
 import sk.posam.fsa.statstracker.domain.StatsTrackerException;
+import sk.posam.fsa.statstracker.domain.predicate.HasMatchHistoryPredicate;
 import sk.posam.fsa.statstracker.domain.predicate.IsNotNullPredicate;
 import sk.posam.fsa.statstracker.domain.predicate.IsUniqueNicknamePredicate;
 
@@ -112,7 +113,7 @@ public class PlayerService implements PlayerFacade {
 
         double myAdr = detail.getStats() != null ? detail.getStats().getAvgAdr() : 0.0;
         long playersAhead = allSnapshots.values().stream()
-                .filter(s -> s.getMatchesPlayed() > 0)
+                .filter(HasMatchHistoryPredicate.INSTANCE)
                 .filter(s -> s.getAvgAdr() > myAdr)
                 .count();
         int rank = (int) playersAhead + 1;
@@ -127,7 +128,7 @@ public class PlayerService implements PlayerFacade {
         List<PlayerMatchStats> recentStats = playerStatsRepository.getForPlayer(id);
         List<Long> matchIds = recentStats.stream()
                 .map(PlayerMatchStats::getMatchId)
-                .filter(mid -> mid != null)
+                .filter(IsNotNullPredicate.getInstance())
                 .collect(Collectors.toList());
         Map<Long, Match> matchMap = matchRepository.getAllByIds(matchIds).stream()
                 .collect(Collectors.toMap(Match::getId, m -> m));
@@ -147,7 +148,7 @@ public class PlayerService implements PlayerFacade {
         List<PlayerMatchStats> stats = playerStatsRepository.getForPlayer(playerId, page, size);
         List<Long> matchIds = stats.stream()
                 .map(PlayerMatchStats::getMatchId)
-                .filter(mid -> mid != null)
+                .filter(IsNotNullPredicate.getInstance())
                 .collect(Collectors.toList());
         Map<Long, Match> matchMap = matchRepository.getAllByIds(matchIds).stream()
                 .collect(Collectors.toMap(Match::getId, m -> m));

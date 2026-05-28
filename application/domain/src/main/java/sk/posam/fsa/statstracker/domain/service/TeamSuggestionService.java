@@ -9,6 +9,7 @@ import sk.posam.fsa.statstracker.domain.TeamBalancer;
 import sk.posam.fsa.statstracker.domain.TeamSuggestion;
 import sk.posam.fsa.statstracker.domain.TeamSuggestionResult;
 import sk.posam.fsa.statstracker.domain.predicate.HasExactSizePredicate;
+import sk.posam.fsa.statstracker.domain.predicate.HasMatchHistoryPredicate;
 import sk.posam.fsa.statstracker.domain.predicate.HasNoDuplicatesPredicate;
 
 import java.util.ArrayList;
@@ -61,7 +62,7 @@ public class TeamSuggestionService implements TeamSuggestionFacade {
 
                 List<String> warnings = new ArrayList<>();
                 for (PlayerStatsSnapshot snapshot : snapshots) {
-                        if (snapshot.getMatchesPlayed() == 0) {
+                        if (!HasMatchHistoryPredicate.INSTANCE.test(snapshot)) {
                                 String nickname = playerById.get(snapshot.getPlayerId()).getNickname();
                                 warnings.add("Player '" + nickname + "' has no match history – using neutral values");
                                 snapshot.applyNeutralValues();

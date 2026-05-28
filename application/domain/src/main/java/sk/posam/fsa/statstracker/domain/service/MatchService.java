@@ -9,6 +9,7 @@ import sk.posam.fsa.statstracker.domain.PlayerMatchStats;
 import sk.posam.fsa.statstracker.domain.PlayerRepository;
 import sk.posam.fsa.statstracker.domain.PlayerStatsRepository;
 import sk.posam.fsa.statstracker.domain.StatsTrackerException;
+import sk.posam.fsa.statstracker.domain.predicate.IsValidCsScorePredicate;
 
 import java.util.List;
 import java.util.Map;
@@ -100,29 +101,15 @@ public class MatchService implements MatchFacade {
     }
 
     private void validateScore(int s1, int s2) throws StatsTrackerException {
-        if (!isValidScore(s1, s2)) {
-            throw new StatsTrackerException(
-                    StatsTrackerException.Type.VALIDATION,
-                    "Invalid CS2 score: " + s1 + "-" + s2 +
-                            ". Regulation: first to 13 with 2+ round lead. OT: first to 16/19/22/... with 2+ round lead.");
-        }
+        require(IsValidCsScorePredicate.INSTANCE.test(s1, s2),
+                StatsTrackerException.Type.VALIDATION,
+                "Invalid CS2 score: " + s1 + "-" + s2 +
+                        ". Regulation: first to 13 with 2+ round lead. OT: first to 16/19/22/... with 2+ round lead.");
     }
 
-    private boolean isValidScore(int s1, int s2) {
-        int max = Math.max(s1, s2);
-        int min = Math.min(s1, s2);
-        // Regulation: first team to 13, must win by at least 2
-        if (max == 13 && min >= 0 && min <= 11)
-            return true;
-        // Overtime rounds: winner = 13 + 3n, loser in [12 + 3*(n-1), 13 + 3n - 2]
-        // n=1: 16-12..14 | n=2: 19-15..17 | n=3: 22-18..20
-        for (int n = 1; n <= 20; n++) {
-            int win = 13 + 3 * n;
-            int loMin = 12 + 3 * (n - 1);
-            int loMax = win - 2;
-            if (max == win && min >= loMin && min <= loMax)
-                return true;
+    private void require(boolean valid, StatsTrackerException.Type type, String message) {
+        if (!valid) {
+            throw new StatsTrackerException(type, message);
         }
-        return false;
     }
 }

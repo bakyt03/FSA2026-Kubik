@@ -2,6 +2,7 @@ package sk.posam.fsa.statstracker.domain.predicate;
 
 import org.junit.jupiter.api.Test;
 import sk.posam.fsa.statstracker.domain.Player;
+import sk.posam.fsa.statstracker.domain.PlayerStatsSnapshot;
 
 import java.util.List;
 
@@ -119,7 +120,59 @@ class PlayerPredicateTest {
         assertFalse(HasNoDuplicatesPredicate.getInstance().test(null));
     }
 
+    // --- IsValidCsScorePredicate ---
+
+    @Test
+    void isValidCsScoreAcceptsRegulationWin() {
+        assertTrue(IsValidCsScorePredicate.INSTANCE.test(13, 5));
+        assertTrue(IsValidCsScorePredicate.INSTANCE.test(13, 0));
+        assertTrue(IsValidCsScorePredicate.INSTANCE.test(13, 11));
+        assertTrue(IsValidCsScorePredicate.INSTANCE.test(0, 13));
+    }
+
+    @Test
+    void isValidCsScoreRejectsImpossibleRegulationScore() {
+        assertFalse(IsValidCsScorePredicate.INSTANCE.test(13, 12)); // loser has 12, not ≤ 11
+        assertFalse(IsValidCsScorePredicate.INSTANCE.test(10, 5)); // 10 is not a valid win score
+        assertFalse(IsValidCsScorePredicate.INSTANCE.test(0, 0));
+    }
+
+    @Test
+    void isValidCsScoreAcceptsOvertimeScores() {
+        assertTrue(IsValidCsScorePredicate.INSTANCE.test(16, 12)); // OT1 min loser
+        assertTrue(IsValidCsScorePredicate.INSTANCE.test(16, 14)); // OT1 max loser
+        assertTrue(IsValidCsScorePredicate.INSTANCE.test(19, 15)); // OT2 min loser
+        assertTrue(IsValidCsScorePredicate.INSTANCE.test(19, 17)); // OT2 max loser
+        assertTrue(IsValidCsScorePredicate.INSTANCE.test(22, 20)); // OT3
+    }
+
+    @Test
+    void isValidCsScoreRejectsInvalidOvertimeScores() {
+        assertFalse(IsValidCsScorePredicate.INSTANCE.test(16, 15)); // tie → more OT, not a finish
+        assertFalse(IsValidCsScorePredicate.INSTANCE.test(16, 11)); // loser below OT1 minimum
+        assertFalse(IsValidCsScorePredicate.INSTANCE.test(15, 13)); // 15 is not a valid win score
+    }
+
+    // --- HasMatchHistoryPredicate ---
+
+    @Test
+    void hasMatchHistoryReturnsTrueWhenMatchesPlayedIsPositive() {
+        assertTrue(HasMatchHistoryPredicate.INSTANCE.test(snapshot(5)));
+        assertTrue(HasMatchHistoryPredicate.INSTANCE.test(snapshot(1)));
+    }
+
+    @Test
+    void hasMatchHistoryReturnsFalseWhenMatchesPlayedIsZero() {
+        assertFalse(HasMatchHistoryPredicate.INSTANCE.test(snapshot(0)));
+    }
+
     // --- helpers ---
+
+    private PlayerStatsSnapshot snapshot(int matchesPlayed) {
+        PlayerStatsSnapshot s = new PlayerStatsSnapshot();
+        s.setMatchesPlayed(matchesPlayed);
+        return s;
+    }
 
     private Player player(String name, String nickname) {
         Player p = new Player();
