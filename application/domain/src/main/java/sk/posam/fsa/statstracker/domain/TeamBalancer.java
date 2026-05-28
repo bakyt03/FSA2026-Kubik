@@ -55,39 +55,30 @@ public class TeamBalancer {
             TeamSuggestion suggestion = new TeamSuggestion();
             suggestion.setTeamA(teamA);
             suggestion.setTeamB(teamB);
-            suggestion.setBalanceScore(calculateBalance(teamA, teamB, statsMap));
+            double avgA = calculateTeamAvg(teamA, statsMap);
+            double avgB = calculateTeamAvg(teamB, statsMap);
+            suggestion.setTeamAAdrAvg(avgA);
+            suggestion.setTeamBAdrAvg(avgB);
+            suggestion.setAdrDifference(Math.abs(avgA - avgB));
             suggestions.add(suggestion);
         }
 
         return suggestions;
     }
 
-    /**
-     * Vypočíta skóre vyrovnanosti dvoch tímov.
-     * Vyššie skóre = vyrovnanejšie tímy.
-     *
-     * @return hodnota v rozsahu (0, 1]
-     */
-    private double calculateBalance(Team t1, Team t2, Map<Long, PlayerStatsSnapshot> statsMap) {
-        double avgT1 = t1.getPlayers().stream()
-                .mapToDouble(player -> resolveHltvRating(player, statsMap))
+    private double calculateTeamAvg(Team team, Map<Long, PlayerStatsSnapshot> statsMap) {
+        return team.getPlayers().stream()
+                .mapToDouble(player -> resolveAdr(player, statsMap))
                 .average()
-                .orElse(1.0);
-
-        double avgT2 = t2.getPlayers().stream()
-                .mapToDouble(player -> resolveHltvRating(player, statsMap))
-                .average()
-                .orElse(1.0);
-
-        return 1.0 / (1.0 + Math.abs(avgT1 - avgT2));
+                .orElse(0.0);
     }
 
-    private double resolveHltvRating(Player player, Map<Long, PlayerStatsSnapshot> statsMap) {
+    private double resolveAdr(Player player, Map<Long, PlayerStatsSnapshot> statsMap) {
         PlayerStatsSnapshot snapshot = statsMap.get(player.getId());
         if (snapshot == null) {
-            return 1.0;
+            return 0.0;
         }
-        return snapshot.getAvgHltvRating();
+        return snapshot.getAvgAdr();
     }
 
     private void require(boolean valid, String message) {

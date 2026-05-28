@@ -9,6 +9,7 @@ import sk.posam.fsa.statstracker.rest.dto.TeamSuggestionDto;
 import sk.posam.fsa.statstracker.domain.TeamSuggestionResult;
 
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class TeamSuggestionMapper {
@@ -29,7 +30,9 @@ public class TeamSuggestionMapper {
 
         List<TeamSuggestionDto> suggestions = result.getSuggestions() == null
                 ? List.of()
-                : result.getSuggestions().stream().map(this::toSuggestionDto).toList();
+                : result.getSuggestions().stream()
+                        .map(s -> toSuggestionDto(s, result.getPlayerAdrMap()))
+                        .toList();
 
         List<String> warnings = result.getWarnings() == null ? List.of() : result.getWarnings();
 
@@ -38,28 +41,37 @@ public class TeamSuggestionMapper {
         return dto;
     }
 
-    private TeamSuggestionDto toSuggestionDto(TeamSuggestion suggestion) {
+    private TeamSuggestionDto toSuggestionDto(TeamSuggestion suggestion, Map<Long, Double> playerAdrMap) {
         TeamSuggestionDto dto = new TeamSuggestionDto();
         if (suggestion == null) {
             dto.setTeamA(new TeamDefinitionDto().players(List.of()));
             dto.setTeamB(new TeamDefinitionDto().players(List.of()));
-            dto.setBalanceScore(0.0);
+            dto.setAdrDifference(0.0);
+            dto.setTeamAAdrAvg(0.0);
+            dto.setTeamBAdrAvg(0.0);
             return dto;
         }
 
-        dto.setTeamA(toTeamDto(suggestion.getTeamA()));
-        dto.setTeamB(toTeamDto(suggestion.getTeamB()));
-        dto.setBalanceScore(suggestion.getBalanceScore());
+        Map<Long, Double> adrMap = playerAdrMap != null ? playerAdrMap : Map.of();
+        dto.setTeamA(toTeamDto(suggestion.getTeamA(), adrMap));
+        dto.setTeamB(toTeamDto(suggestion.getTeamB(), adrMap));
+        dto.setAdrDifference(suggestion.getAdrDifference());
+        dto.setTeamAAdrAvg(suggestion.getTeamAAdrAvg());
+        dto.setTeamBAdrAvg(suggestion.getTeamBAdrAvg());
         return dto;
     }
 
-    private TeamDefinitionDto toTeamDto(Team team) {
+    private TeamDefinitionDto toTeamDto(Team team, Map<Long, Double> playerAdrMap) {
         TeamDefinitionDto dto = new TeamDefinitionDto();
         if (team == null || team.getPlayers() == null) {
             dto.setPlayers(List.of());
             return dto;
         }
-        dto.setPlayers(team.getPlayers().stream().map(playerMapper::toDto).toList());
+        dto.setPlayers(team.getPlayers().stream().map(p -> {
+            var pd = playerMapper.toDto(p);
+            pd.setAvgAdr(playerAdrMap.getOrDefault(p.getId(), 0.0));
+            return pd;
+        }).toList());
         return dto;
     }
 }

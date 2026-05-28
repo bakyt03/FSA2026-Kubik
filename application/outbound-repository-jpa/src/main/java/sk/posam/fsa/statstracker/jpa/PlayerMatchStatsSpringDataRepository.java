@@ -28,10 +28,12 @@ public interface PlayerMatchStatsSpringDataRepository extends JpaRepository<Play
 
     /**
      * Vráti všetky záznamy pre zadaných hráčov zoradené zostupne podľa ID.
+     * JOIN-uje s Match entitou (rovnaký filter ako findAggregatedStatsForPlayers)
+     * aby sa vylúčili osirelé záznamy bez platného zápasu.
      * Limitovanie na posledných N záznamov prebieha v adaptéri (in-memory
      * grouping).
      */
-    @Query("SELECT s FROM PlayerMatchStats s WHERE s.playerId IN :playerIds ORDER BY s.playerId ASC, s.id DESC")
+    @Query("SELECT s FROM PlayerMatchStats s, Match m WHERE s.matchId = m.id AND s.playerId IN :playerIds ORDER BY s.playerId ASC, s.id DESC")
     List<PlayerMatchStats> findAllByPlayerIdInOrderByIdDesc(@Param("playerIds") List<Long> playerIds);
 
     List<PlayerMatchStats> findByMatchId(Long matchId);

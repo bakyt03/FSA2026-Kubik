@@ -3,7 +3,9 @@ package sk.posam.fsa.statstracker.domain;
 public class TeamSuggestion {
     private Team teamA;
     private Team teamB;
-    private double balanceScore;
+    private double adrDifference;
+    private double teamAAdrAvg;
+    private double teamBAdrAvg;
 
     public Team getTeamA() {
         return teamA;
@@ -21,11 +23,27 @@ public class TeamSuggestion {
         this.teamB = teamB;
     }
 
-    public double getBalanceScore() {
-        return balanceScore;
+    public double getAdrDifference() {
+        return adrDifference;
     }
 
-    public void setBalanceScore(double balanceScore) {
-        this.balanceScore = balanceScore;
+    public void setAdrDifference(double adrDifference) {
+        this.adrDifference = adrDifference;
+    }
+
+    public double getTeamAAdrAvg() {
+        return teamAAdrAvg;
+    }
+
+    public void setTeamAAdrAvg(double teamAAdrAvg) {
+        this.teamAAdrAvg = teamAAdrAvg;
+    }
+
+    public double getTeamBAdrAvg() {
+        return teamBAdrAvg;
+    }
+
+    public void setTeamBAdrAvg(double teamBAdrAvg) {
+        this.teamBAdrAvg = teamBAdrAvg;
     }
 }

@@ -621,10 +621,18 @@ components:
           $ref: "#/components/schemas/TeamDefinition"
         teamB:
           $ref: "#/components/schemas/TeamDefinition"
-        balanceScore:
+        adrDifference:
           type: number
           format: double
-          description: Skóre vyrovnanosti – čím vyššie, tým vyrovnanejšie tímy
+          description: Absolute ADR difference between teams (last 20 matches) – lower means more balanced
+        teamAAdrAvg:
+          type: number
+          format: double
+          description: Team A average ADR (last 20 matches per player)
+        teamBAdrAvg:
+          type: number
+          format: double
+          description: Team B average ADR (last 20 matches per player)
 
     TeamDefinition:
       type: object

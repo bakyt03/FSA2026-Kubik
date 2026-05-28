@@ -73,16 +73,22 @@ public class TeamSuggestionService implements TeamSuggestionFacade {
 
                 List<TeamSuggestion> suggestions = teamBalancer.generateSuggestions(players, statsMap);
 
-                // sort descending by balanceScore, take top 3
+                // sort ascending by adrDifference (smallest diff = most balanced), take top 3
                 List<TeamSuggestion> top3 = suggestions.stream()
-                                .sorted(Comparator.comparingDouble(TeamSuggestion::getBalanceScore).reversed())
+                                .sorted(Comparator.comparingDouble(TeamSuggestion::getAdrDifference))
                                 .limit(3)
                                 .collect(Collectors.toList());
+
+                // build playerAdrMap from last-20-match stats
+                Map<Long, Double> playerAdrMap = statsMap.entrySet().stream()
+                                .collect(Collectors.toMap(Map.Entry::getKey,
+                                                e -> e.getValue().getAvgAdr()));
 
                 // wrap in result
                 TeamSuggestionResult result = new TeamSuggestionResult();
                 result.setSuggestions(top3);
                 result.setWarnings(warnings);
+                result.setPlayerAdrMap(playerAdrMap);
                 return result;
         }
 
