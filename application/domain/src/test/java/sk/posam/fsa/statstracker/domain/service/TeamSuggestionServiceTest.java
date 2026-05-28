@@ -48,7 +48,7 @@ class TeamSuggestionServiceTest {
         List<Long> ids = List.of(1L, 2L, 3L);
 
         StatsTrackerException ex = assertThrows(StatsTrackerException.class,
-                () -> service.generateSuggestions(ids));
+                () -> service.generateSuggestions(ids, Double.MAX_VALUE));
 
         assertEquals(StatsTrackerException.Type.VALIDATION, ex.getType());
         verify(playerRepository, never()).getByIds(any());
@@ -60,7 +60,7 @@ class TeamSuggestionServiceTest {
         List<Long> ids = List.of(1L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L);
 
         StatsTrackerException ex = assertThrows(StatsTrackerException.class,
-                () -> service.generateSuggestions(ids));
+                () -> service.generateSuggestions(ids, Double.MAX_VALUE));
 
         assertEquals(StatsTrackerException.Type.VALIDATION, ex.getType());
         verify(playerRepository, never()).getByIds(any());
@@ -73,7 +73,7 @@ class TeamSuggestionServiceTest {
         when(playerRepository.getByIds(ids)).thenReturn(players(9));
 
         StatsTrackerException ex = assertThrows(StatsTrackerException.class,
-                () -> service.generateSuggestions(ids));
+                () -> service.generateSuggestions(ids, Double.MAX_VALUE));
 
         assertEquals(StatsTrackerException.Type.NOT_FOUND, ex.getType());
     }
@@ -89,7 +89,7 @@ class TeamSuggestionServiceTest {
         when(teamBalancer.generateSuggestions(any(), any())).thenReturn(
                 List.of(suggestion(0.5), suggestion(0.9), suggestion(0.7), suggestion(0.3)));
 
-        TeamSuggestionResult result = service.generateSuggestions(ids);
+        TeamSuggestionResult result = service.generateSuggestions(ids, 0.8);
 
         assertEquals(3, result.getSuggestions().size());
         assertEquals(0.3, result.getSuggestions().get(0).getAdrDifference());
@@ -113,7 +113,7 @@ class TeamSuggestionServiceTest {
         when(teamBalancer.generateSuggestions(any(), any())).thenReturn(
                 List.of(suggestion(1.0), suggestion(0.9), suggestion(0.8)));
 
-        TeamSuggestionResult result = service.generateSuggestions(ids);
+        TeamSuggestionResult result = service.generateSuggestions(ids, Double.MAX_VALUE);
 
         assertEquals(1, result.getWarnings().size());
         assertTrue(result.getWarnings().get(0).contains("nick1"));
@@ -135,7 +135,7 @@ class TeamSuggestionServiceTest {
         when(teamBalancer.generateSuggestions(any(), any())).thenReturn(
                 List.of(suggestion(1.0), suggestion(0.9), suggestion(0.8)));
 
-        service.generateSuggestions(ids);
+        service.generateSuggestions(ids, Double.MAX_VALUE);
 
         // applyNeutralValues() sets avgHltvRating to 1.0
         assertEquals(1.0, noHistorySnapshot.getAvgHltvRating());
