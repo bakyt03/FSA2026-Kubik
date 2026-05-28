@@ -1,10 +1,11 @@
 package sk.posam.fsa.statstracker.mapper;
 
 import org.springframework.stereotype.Component;
-import sk.posam.fsa.statstracker.domain.Match;
-import sk.posam.fsa.statstracker.domain.MatchWithStats;
-import sk.posam.fsa.statstracker.domain.PlayerInMatch;
-import sk.posam.fsa.statstracker.domain.PlayerMatchStats;
+import sk.posam.fsa.statstracker.domain.match.Map;
+import sk.posam.fsa.statstracker.domain.match.Match;
+import sk.posam.fsa.statstracker.domain.match.MatchWithStats;
+import sk.posam.fsa.statstracker.domain.player.PlayerInMatch;
+import sk.posam.fsa.statstracker.domain.player.PlayerMatchStats;
 import sk.posam.fsa.statstracker.rest.dto.CreateMatchRequestDto;
 import sk.posam.fsa.statstracker.rest.dto.MatchDetailDto;
 import sk.posam.fsa.statstracker.rest.dto.MatchPlayerStatsDto;
@@ -20,7 +21,7 @@ public class MatchMapper {
         if (dto == null)
             return null;
         Match match = new Match();
-        match.setMap(sk.posam.fsa.statstracker.domain.Map.valueOf(dto.getMap().getValue()));
+        match.setMap(Map.valueOf(dto.getMap().getValue()));
         match.setPlayedAt(dto.getPlayedAt());
         match.setTeam1Score(dto.getTeam1Score());
         match.setTeam2Score(dto.getTeam2Score());

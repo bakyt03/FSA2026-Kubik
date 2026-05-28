@@ -8,7 +8,7 @@ import sk.posam.fsa.statstracker.rest.dto.CreateMatchRequestDto;
 import sk.posam.fsa.statstracker.rest.dto.MatchDetailDto;
 import sk.posam.fsa.statstracker.rest.dto.MatchSummaryDto;
 import sk.posam.fsa.statstracker.domain.StatsTrackerException;
-import sk.posam.fsa.statstracker.domain.service.MatchFacade;
+import sk.posam.fsa.statstracker.domain.service.match.MatchFacade;
 import sk.posam.fsa.statstracker.mapper.MatchMapper;
 
 import java.util.List;

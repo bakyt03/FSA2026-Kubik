@@ -2,19 +2,19 @@ package sk.posam.fsa.statstracker;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import sk.posam.fsa.statstracker.domain.MatchRepository;
-import sk.posam.fsa.statstracker.domain.PlayerRepository;
-import sk.posam.fsa.statstracker.domain.PlayerStatsRepository;
-import sk.posam.fsa.statstracker.domain.TeamBalancer;
-import sk.posam.fsa.statstracker.domain.UserManagementPort;
-import sk.posam.fsa.statstracker.domain.service.MatchFacade;
-import sk.posam.fsa.statstracker.domain.service.MatchService;
-import sk.posam.fsa.statstracker.domain.service.PlayerFacade;
-import sk.posam.fsa.statstracker.domain.service.PlayerService;
-import sk.posam.fsa.statstracker.domain.service.TeamSuggestionFacade;
-import sk.posam.fsa.statstracker.domain.service.TeamSuggestionService;
-import sk.posam.fsa.statstracker.domain.service.UserManagementFacade;
-import sk.posam.fsa.statstracker.domain.service.UserManagementService;
+import sk.posam.fsa.statstracker.domain.match.MatchRepository;
+import sk.posam.fsa.statstracker.domain.player.PlayerRepository;
+import sk.posam.fsa.statstracker.domain.player.PlayerStatsRepository;
+import sk.posam.fsa.statstracker.domain.team.TeamBalancer;
+import sk.posam.fsa.statstracker.domain.user.UserManagementPort;
+import sk.posam.fsa.statstracker.domain.service.match.MatchFacade;
+import sk.posam.fsa.statstracker.domain.service.match.MatchService;
+import sk.posam.fsa.statstracker.domain.service.player.PlayerFacade;
+import sk.posam.fsa.statstracker.domain.service.player.PlayerService;
+import sk.posam.fsa.statstracker.domain.service.teamSuggestion.TeamSuggestionFacade;
+import sk.posam.fsa.statstracker.domain.service.teamSuggestion.TeamSuggestionService;
+import sk.posam.fsa.statstracker.domain.service.userManagement.UserManagementFacade;
+import sk.posam.fsa.statstracker.domain.service.userManagement.UserManagementService;
 
 /**
  * Skladá doménové beany pre Stats Tracker modul.

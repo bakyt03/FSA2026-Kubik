@@ -1,6 +1,6 @@
 package sk.posam.fsa.statstracker.domain.predicate;
 
-import sk.posam.fsa.statstracker.domain.Player;
+import sk.posam.fsa.statstracker.domain.player.Player;
 
 import java.util.function.Predicate;
 

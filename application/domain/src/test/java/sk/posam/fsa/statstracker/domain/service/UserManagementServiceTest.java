@@ -5,10 +5,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import sk.posam.fsa.statstracker.domain.KeycloakUserInfo;
-import sk.posam.fsa.statstracker.domain.Player;
-import sk.posam.fsa.statstracker.domain.PlayerRepository;
-import sk.posam.fsa.statstracker.domain.UserManagementPort;
+import sk.posam.fsa.statstracker.domain.user.KeycloakUserInfo;
+import sk.posam.fsa.statstracker.domain.player.Player;
+import sk.posam.fsa.statstracker.domain.player.PlayerRepository;
+import sk.posam.fsa.statstracker.domain.user.UserManagementPort;
+import sk.posam.fsa.statstracker.domain.service.userManagement.UserManagementService;
 
 import java.util.List;
 import java.util.Optional;

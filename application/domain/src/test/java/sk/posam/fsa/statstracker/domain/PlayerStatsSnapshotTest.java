@@ -1,6 +1,7 @@
 package sk.posam.fsa.statstracker.domain;
 
 import org.junit.jupiter.api.Test;
+import sk.posam.fsa.statstracker.domain.player.PlayerStatsSnapshot;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

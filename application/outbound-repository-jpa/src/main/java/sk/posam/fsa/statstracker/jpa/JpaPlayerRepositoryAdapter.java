@@ -2,8 +2,8 @@ package sk.posam.fsa.statstracker.jpa;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import sk.posam.fsa.statstracker.domain.Player;
-import sk.posam.fsa.statstracker.domain.PlayerRepository;
+import sk.posam.fsa.statstracker.domain.player.Player;
+import sk.posam.fsa.statstracker.domain.player.PlayerRepository;
 
 import java.util.List;
 import java.util.Optional;

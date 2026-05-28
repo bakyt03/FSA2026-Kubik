@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.RestController;
 import sk.posam.fsa.statstracker.rest.api.TeamSuggestionsApi;
 import sk.posam.fsa.statstracker.rest.dto.TeamSuggestionRequestDto;
 import sk.posam.fsa.statstracker.rest.dto.TeamSuggestionResponseDto;
-import sk.posam.fsa.statstracker.domain.TeamSuggestionResult;
-import sk.posam.fsa.statstracker.domain.service.TeamSuggestionFacade;
+import sk.posam.fsa.statstracker.domain.team.TeamSuggestionResult;
+import sk.posam.fsa.statstracker.domain.service.teamSuggestion.TeamSuggestionFacade;
 import sk.posam.fsa.statstracker.mapper.TeamSuggestionMapper;
 
 @RestController

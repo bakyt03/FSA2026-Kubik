@@ -8,7 +8,7 @@
         version="3.0">
 
     <!-- Player Entity -->
-    <entity class="sk.posam.fsa.statstracker.domain.Player" access="FIELD">
+    <entity class="sk.posam.fsa.statstracker.domain.player.Player" access="FIELD">
         <table name="player"/>
         <attributes>
             <id name="id">
@@ -28,7 +28,7 @@
     </entity>
 
     <!-- PlayerMatchStats Entity -->
-    <entity class="sk.posam.fsa.statstracker.domain.PlayerMatchStats" access="FIELD">
+    <entity class="sk.posam.fsa.statstracker.domain.player.PlayerMatchStats" access="FIELD">
         <table name="player_match_stats"/>
         <attributes>
             <id name="id">
@@ -69,7 +69,7 @@
     </entity>
 
     <!-- Match Entity -->
-    <entity class="sk.posam.fsa.statstracker.domain.Match" access="FIELD">
+    <entity class="sk.posam.fsa.statstracker.domain.match.Match" access="FIELD">
         <table name="match"/>
         <attributes>
             <id name="id">

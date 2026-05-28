@@ -1,6 +1,10 @@
 package sk.posam.fsa.statstracker.domain;
 
 import org.junit.jupiter.api.Test;
+import sk.posam.fsa.statstracker.domain.player.Player;
+import sk.posam.fsa.statstracker.domain.player.PlayerStatsSnapshot;
+import sk.posam.fsa.statstracker.domain.team.TeamBalancer;
+import sk.posam.fsa.statstracker.domain.team.TeamSuggestion;
 
 import java.util.ArrayList;
 import java.util.HashMap;

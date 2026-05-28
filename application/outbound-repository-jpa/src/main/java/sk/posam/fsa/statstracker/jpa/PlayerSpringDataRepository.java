@@ -1,7 +1,7 @@
 package sk.posam.fsa.statstracker.jpa;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import sk.posam.fsa.statstracker.domain.Player;
+import sk.posam.fsa.statstracker.domain.player.Player;
 
 import java.util.Optional;
 

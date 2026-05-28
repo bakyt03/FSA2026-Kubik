@@ -3,9 +3,9 @@ package sk.posam.fsa.statstracker.jpa;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import sk.posam.fsa.statstracker.domain.PlayerMatchStats;
-import sk.posam.fsa.statstracker.domain.PlayerStatsRepository;
-import sk.posam.fsa.statstracker.domain.PlayerStatsSnapshot;
+import sk.posam.fsa.statstracker.domain.player.PlayerMatchStats;
+import sk.posam.fsa.statstracker.domain.player.PlayerStatsRepository;
+import sk.posam.fsa.statstracker.domain.player.PlayerStatsSnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;

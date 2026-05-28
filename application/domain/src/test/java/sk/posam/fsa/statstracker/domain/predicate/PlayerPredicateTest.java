@@ -1,8 +1,8 @@
 package sk.posam.fsa.statstracker.domain.predicate;
 
 import org.junit.jupiter.api.Test;
-import sk.posam.fsa.statstracker.domain.Player;
-import sk.posam.fsa.statstracker.domain.PlayerStatsSnapshot;
+import sk.posam.fsa.statstracker.domain.player.Player;
+import sk.posam.fsa.statstracker.domain.player.PlayerStatsSnapshot;
 
 import java.util.List;
 

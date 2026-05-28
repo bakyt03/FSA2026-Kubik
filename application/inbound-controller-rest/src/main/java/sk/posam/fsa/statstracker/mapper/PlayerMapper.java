@@ -6,13 +6,13 @@ import sk.posam.fsa.statstracker.rest.dto.PlayerDetailDto;
 import sk.posam.fsa.statstracker.rest.dto.PlayerMatchHistoryEntryDto;
 import sk.posam.fsa.statstracker.rest.dto.PlayerMeDetailDto;
 import sk.posam.fsa.statstracker.rest.dto.PlayerSummaryDto;
-import sk.posam.fsa.statstracker.domain.Match;
-import sk.posam.fsa.statstracker.domain.Player;
-import sk.posam.fsa.statstracker.domain.PlayerDetail;
-import sk.posam.fsa.statstracker.domain.PlayerMatchHistoryEntry;
-import sk.posam.fsa.statstracker.domain.PlayerMeDetail;
-import sk.posam.fsa.statstracker.domain.PlayerStatsSnapshot;
-import sk.posam.fsa.statstracker.domain.PlayerWithStats;
+import sk.posam.fsa.statstracker.domain.match.Match;
+import sk.posam.fsa.statstracker.domain.player.Player;
+import sk.posam.fsa.statstracker.domain.player.PlayerDetail;
+import sk.posam.fsa.statstracker.domain.player.PlayerMatchHistoryEntry;
+import sk.posam.fsa.statstracker.domain.player.PlayerMeDetail;
+import sk.posam.fsa.statstracker.domain.player.PlayerStatsSnapshot;
+import sk.posam.fsa.statstracker.domain.player.PlayerWithStats;
 
 @Component
 public class PlayerMapper {

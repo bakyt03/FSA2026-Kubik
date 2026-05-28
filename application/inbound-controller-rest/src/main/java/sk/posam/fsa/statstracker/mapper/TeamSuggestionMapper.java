@@ -1,12 +1,12 @@
 package sk.posam.fsa.statstracker.mapper;
 
 import org.springframework.stereotype.Component;
-import sk.posam.fsa.statstracker.domain.Team;
-import sk.posam.fsa.statstracker.domain.TeamSuggestion;
+import sk.posam.fsa.statstracker.domain.team.Team;
+import sk.posam.fsa.statstracker.domain.team.TeamSuggestion;
 import sk.posam.fsa.statstracker.rest.dto.TeamSuggestionResponseDto;
 import sk.posam.fsa.statstracker.rest.dto.TeamDefinitionDto;
 import sk.posam.fsa.statstracker.rest.dto.TeamSuggestionDto;
-import sk.posam.fsa.statstracker.domain.TeamSuggestionResult;
+import sk.posam.fsa.statstracker.domain.team.TeamSuggestionResult;
 
 import java.util.List;
 import java.util.Map;

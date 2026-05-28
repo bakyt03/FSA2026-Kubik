@@ -3,8 +3,8 @@ package sk.posam.fsa.statstracker.jpa;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import sk.posam.fsa.statstracker.domain.Match;
-import sk.posam.fsa.statstracker.domain.MatchRepository;
+import sk.posam.fsa.statstracker.domain.match.Match;
+import sk.posam.fsa.statstracker.domain.match.MatchRepository;
 
 import java.util.List;
 import java.util.Optional;

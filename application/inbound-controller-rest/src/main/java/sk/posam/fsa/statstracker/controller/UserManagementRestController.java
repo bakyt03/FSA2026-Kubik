@@ -2,8 +2,8 @@ package sk.posam.fsa.statstracker.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-import sk.posam.fsa.statstracker.domain.KeycloakUserInfo;
-import sk.posam.fsa.statstracker.domain.service.UserManagementFacade;
+import sk.posam.fsa.statstracker.domain.user.KeycloakUserInfo;
+import sk.posam.fsa.statstracker.domain.service.userManagement.UserManagementFacade;
 import sk.posam.fsa.statstracker.rest.api.UsersApi;
 import sk.posam.fsa.statstracker.rest.dto.KeycloakUserDtoDto;
 import sk.posam.fsa.statstracker.rest.dto.UserCreateRequestDto;

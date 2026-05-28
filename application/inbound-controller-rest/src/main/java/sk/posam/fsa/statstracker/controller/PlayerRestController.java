@@ -12,9 +12,9 @@ import sk.posam.fsa.statstracker.rest.dto.PlayerDetailDto;
 import sk.posam.fsa.statstracker.rest.dto.PlayerMatchHistoryEntryDto;
 import sk.posam.fsa.statstracker.rest.dto.PlayerMeDetailDto;
 import sk.posam.fsa.statstracker.rest.dto.PlayerSummaryDto;
-import sk.posam.fsa.statstracker.domain.Player;
+import sk.posam.fsa.statstracker.domain.player.Player;
 import sk.posam.fsa.statstracker.domain.StatsTrackerException;
-import sk.posam.fsa.statstracker.domain.service.PlayerFacade;
+import sk.posam.fsa.statstracker.domain.service.player.PlayerFacade;
 import sk.posam.fsa.statstracker.mapper.PlayerMapper;
 
 import java.util.List;
