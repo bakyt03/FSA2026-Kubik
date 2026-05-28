@@ -116,8 +116,7 @@ class TeamSuggestionServiceTest {
         TeamSuggestionResult result = service.generateSuggestions(ids, Double.MAX_VALUE);
 
         assertEquals(1, result.getWarnings().size());
-        assertTrue(result.getWarnings().get(0).contains("nick1"));
-        assertTrue(result.getWarnings().get(0).contains("neutral values"));
+        assertEquals("noMatchHistory:nick1", result.getWarnings().get(0));
     }
 
     @Test

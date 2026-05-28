@@ -17,6 +17,7 @@ spring:
       - persistence/statstracker-orm.xml
   liquibase:
     change-log: classpath:persistence/db/changelog/changelog-master.xml
+    contexts: schema
 # Kubernetes probes (readiness & liveness) and monitoring
 management:
   endpoint:

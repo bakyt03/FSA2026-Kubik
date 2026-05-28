@@ -64,7 +64,7 @@ public class TeamSuggestionService implements TeamSuggestionFacade {
                 for (PlayerStatsSnapshot snapshot : snapshots) {
                         if (!HasMatchHistoryPredicate.INSTANCE.test(snapshot)) {
                                 String nickname = playerById.get(snapshot.getPlayerId()).getNickname();
-                                warnings.add("Player '" + nickname + "' has no match history – using neutral values");
+                                warnings.add("noMatchHistory:" + nickname);
                                 snapshot.applyNeutralValues();
                         }
                 }
