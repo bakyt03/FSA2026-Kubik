@@ -652,6 +652,7 @@ components:
       type: object
       required:
         - playerIds
+        - maxAdrDifference
       properties:
         playerIds:
           type: array
@@ -660,6 +661,11 @@ components:
             format: int64
           minItems: 10
           maxItems: 10
+        maxAdrDifference:
+          type: number
+          format: double
+          minimum: 0
+          description: Maximum allowed ADR difference between teams; all suggestions within this threshold are returned
 
     TeamSuggestionResponse:
       type: object

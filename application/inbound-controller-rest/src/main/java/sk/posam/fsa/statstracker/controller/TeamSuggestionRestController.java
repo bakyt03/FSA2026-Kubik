@@ -25,7 +25,8 @@ public class TeamSuggestionRestController implements TeamSuggestionsApi {
     public ResponseEntity<TeamSuggestionResponseDto> generateTeamSuggestions(
             TeamSuggestionRequestDto teamSuggestionRequestDto) {
         TeamSuggestionResult result = teamSuggestionFacade.generateSuggestions(
-                teamSuggestionRequestDto.getPlayerIds());
+                teamSuggestionRequestDto.getPlayerIds(),
+                teamSuggestionRequestDto.getMaxAdrDifference());
         TeamSuggestionResponseDto responseDto = teamSuggestionMapper.toDto(result);
         return ResponseEntity.ok(responseDto);
     }

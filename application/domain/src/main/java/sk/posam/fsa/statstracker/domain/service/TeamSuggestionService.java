@@ -33,7 +33,8 @@ public class TeamSuggestionService implements TeamSuggestionFacade {
         }
 
         @Override
-        public TeamSuggestionResult generateSuggestions(List<Long> playerIds) throws StatsTrackerException {
+        public TeamSuggestionResult generateSuggestions(List<Long> playerIds, double maxAdrDifference)
+                        throws StatsTrackerException {
                 // exactly 10 players
                 require(HasExactSizePredicate.ofSize(10).test(playerIds),
                                 StatsTrackerException.Type.VALIDATION, "Exactly 10 player IDs are required");
@@ -73,10 +74,11 @@ public class TeamSuggestionService implements TeamSuggestionFacade {
 
                 List<TeamSuggestion> suggestions = teamBalancer.generateSuggestions(players, statsMap);
 
-                // sort ascending by adrDifference (smallest diff = most balanced), take top 3
+                // sort ascending by adrDifference, keep only those within the requested
+                // threshold
                 List<TeamSuggestion> top3 = suggestions.stream()
+                                .filter(s -> s.getAdrDifference() <= maxAdrDifference)
                                 .sorted(Comparator.comparingDouble(TeamSuggestion::getAdrDifference))
-                                .limit(3)
                                 .collect(Collectors.toList());
 
                 // build playerAdrMap from last-20-match stats
