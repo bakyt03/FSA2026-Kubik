@@ -114,10 +114,10 @@ public class MatchService implements MatchFacade {
         // Regulation: first team to 13, must win by at least 2
         if (max == 13 && min >= 0 && min <= 11)
             return true;
-        // Overtime rounds: winner = 12 + 4n, loser in [12 + 3*(n-1), 12 + 4n - 2]
-        // Minimum difference in OT is always 2 (4-2 in OT rounds)
+        // Overtime rounds: winner = 13 + 3n, loser in [12 + 3*(n-1), 13 + 3n - 2]
+        // n=1: 16-12..14 | n=2: 19-15..17 | n=3: 22-18..20
         for (int n = 1; n <= 20; n++) {
-            int win = 12 + 4 * n;
+            int win = 13 + 3 * n;
             int loMin = 12 + 3 * (n - 1);
             int loMax = win - 2;
             if (max == win && min >= loMin && min <= loMax)
