@@ -8,6 +8,8 @@ public interface MatchRepository {
 
     List<Match> getAll();
 
+    List<Match> getAll(int page, int size);
+
     List<Match> getAllByIds(List<Long> ids);
 
     Match create(Match match);

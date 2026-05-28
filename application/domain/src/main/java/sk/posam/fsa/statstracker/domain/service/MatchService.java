@@ -33,6 +33,11 @@ public class MatchService implements MatchFacade {
     }
 
     @Override
+    public List<Match> getAll(int page, int size) {
+        return matchRepository.getAll(page, size);
+    }
+
+    @Override
     public MatchWithStats getById(long id) throws StatsTrackerException {
         Match match = matchRepository.get(id)
                 .orElseThrow(() -> new StatsTrackerException(StatsTrackerException.Type.NOT_FOUND,

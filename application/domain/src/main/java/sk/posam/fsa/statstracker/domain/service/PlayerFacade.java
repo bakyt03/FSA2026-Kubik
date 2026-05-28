@@ -2,6 +2,7 @@ package sk.posam.fsa.statstracker.domain.service;
 
 import sk.posam.fsa.statstracker.domain.Player;
 import sk.posam.fsa.statstracker.domain.PlayerDetail;
+import sk.posam.fsa.statstracker.domain.PlayerMatchHistoryEntry;
 import sk.posam.fsa.statstracker.domain.PlayerMeDetail;
 import sk.posam.fsa.statstracker.domain.PlayerWithStats;
 import sk.posam.fsa.statstracker.domain.StatsTrackerException;
@@ -33,6 +34,8 @@ public interface PlayerFacade {
     List<PlayerWithStats> findAllWithStats();
 
     PlayerDetail getById(long id) throws StatsTrackerException;
+
+    List<PlayerMatchHistoryEntry> getMatchHistory(long playerId, int page, int size) throws StatsTrackerException;
 
     /**
      * Prepojí hráča s Keycloak účtom.

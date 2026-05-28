@@ -102,6 +102,11 @@ public class JpaPlayerStatsRepositoryAdapter implements PlayerStatsRepository {
     }
 
     @Override
+    public List<PlayerMatchStats> getForPlayer(long playerId, int page, int size) {
+        return statsRepository.findByPlayerIdOrderByIdDesc(playerId, PageRequest.of(page, size));
+    }
+
+    @Override
     @Transactional
     public void deleteByMatchId(long matchId) {
         statsRepository.deleteByMatchId(matchId);

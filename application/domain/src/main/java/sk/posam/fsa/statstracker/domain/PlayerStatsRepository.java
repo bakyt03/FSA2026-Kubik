@@ -26,6 +26,8 @@ public interface PlayerStatsRepository {
 
     List<PlayerMatchStats> getForPlayer(long playerId);
 
+    List<PlayerMatchStats> getForPlayer(long playerId, int page, int size);
+
     void create(PlayerMatchStats stats);
 
     void deleteByMatchId(long matchId);

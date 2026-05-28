@@ -25,9 +25,9 @@ public class MatchRestController implements MatchesApi {
     }
 
     @Override
-    public ResponseEntity<List<MatchSummaryDto>> listMatches() {
+    public ResponseEntity<List<MatchSummaryDto>> listMatches(Integer page, Integer size) {
         return ResponseEntity.ok(
-                matchFacade.getAll().stream()
+                matchFacade.getAll(page, size).stream()
                         .map(matchMapper::toDto)
                         .toList());
     }

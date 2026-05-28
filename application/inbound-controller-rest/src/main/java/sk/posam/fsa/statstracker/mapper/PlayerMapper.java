@@ -98,7 +98,7 @@ public class PlayerMapper {
         return dto;
     }
 
-    private PlayerMatchHistoryEntryDto toHistoryEntryDto(PlayerMatchHistoryEntry entry) {
+    public PlayerMatchHistoryEntryDto toHistoryEntryDto(PlayerMatchHistoryEntry entry) {
         PlayerMatchHistoryEntryDto dto = new PlayerMatchHistoryEntryDto();
         Match match = entry.getMatch();
         dto.setMatchId(match.getId());

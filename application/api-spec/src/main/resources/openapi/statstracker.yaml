@@ -241,12 +241,64 @@ paths:
         "404":
           description: Hráč neexistuje
 
+  /players/{id}/matches:
+    get:
+      summary: Získanie histórie zápasov hráča (stránkované)
+      operationId: getPlayerMatches
+      tags:
+        - Player
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: Stránka histórie zápasov hráča
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PlayerMatchHistoryEntry"
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+
   /matches:
     get:
       summary: Získanie zoznamu všetkých zápasov
       operationId: listMatches
       tags:
         - Match
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 25
       responses:
         "200":
           description: Zoznam zápasov

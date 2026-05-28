@@ -1,5 +1,6 @@
 package sk.posam.fsa.statstracker.jpa;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import sk.posam.fsa.statstracker.domain.Match;
@@ -25,6 +26,11 @@ public class JpaMatchRepositoryAdapter implements MatchRepository {
     @Override
     public List<Match> getAll() {
         return matchSpringDataRepository.findAllByOrderByPlayedAtDesc();
+    }
+
+    @Override
+    public List<Match> getAll(int page, int size) {
+        return matchSpringDataRepository.findAllByOrderByPlayedAtDesc(PageRequest.of(page, size)).getContent();
     }
 
     @Override

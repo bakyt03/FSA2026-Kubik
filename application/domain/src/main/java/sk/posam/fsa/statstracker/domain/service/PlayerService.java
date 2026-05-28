@@ -139,6 +139,25 @@ public class PlayerService implements PlayerFacade {
     }
 
     @Override
+    public List<PlayerMatchHistoryEntry> getMatchHistory(long playerId, int page, int size)
+            throws StatsTrackerException {
+        playerRepository.get(playerId)
+                .orElseThrow(() -> new StatsTrackerException(StatsTrackerException.Type.NOT_FOUND,
+                        "Player not found: " + playerId));
+        List<PlayerMatchStats> stats = playerStatsRepository.getForPlayer(playerId, page, size);
+        List<Long> matchIds = stats.stream()
+                .map(PlayerMatchStats::getMatchId)
+                .filter(mid -> mid != null)
+                .collect(Collectors.toList());
+        Map<Long, Match> matchMap = matchRepository.getAllByIds(matchIds).stream()
+                .collect(Collectors.toMap(Match::getId, m -> m));
+        return stats.stream()
+                .filter(s -> matchMap.containsKey(s.getMatchId()))
+                .map(s -> new PlayerMatchHistoryEntry(matchMap.get(s.getMatchId()), s))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public void deletePlayer(long playerId) throws StatsTrackerException {
         playerRepository.get(playerId)
                 .orElseThrow(() -> new StatsTrackerException(StatsTrackerException.Type.NOT_FOUND,

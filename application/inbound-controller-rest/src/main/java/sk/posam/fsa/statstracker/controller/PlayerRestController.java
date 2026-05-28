@@ -9,6 +9,7 @@ import sk.posam.fsa.statstracker.rest.api.PlayersApi;
 import sk.posam.fsa.statstracker.rest.dto.CreatePlayerRequestDto;
 import sk.posam.fsa.statstracker.rest.dto.LinkUserRequestDto;
 import sk.posam.fsa.statstracker.rest.dto.PlayerDetailDto;
+import sk.posam.fsa.statstracker.rest.dto.PlayerMatchHistoryEntryDto;
 import sk.posam.fsa.statstracker.rest.dto.PlayerMeDetailDto;
 import sk.posam.fsa.statstracker.rest.dto.PlayerSummaryDto;
 import sk.posam.fsa.statstracker.domain.Player;
@@ -81,6 +82,18 @@ public class PlayerRestController implements PlayersApi {
         try {
             playerFacade.deletePlayer(id);
             return ResponseEntity.noContent().build();
+        } catch (StatsTrackerException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<PlayerMatchHistoryEntryDto>> getPlayerMatches(Long id, Integer page, Integer size) {
+        try {
+            return ResponseEntity.ok(
+                    playerFacade.getMatchHistory(id, page, size).stream()
+                            .map(playerMapper::toHistoryEntryDto)
+                            .toList());
         } catch (StatsTrackerException e) {
             return ResponseEntity.notFound().build();
         }

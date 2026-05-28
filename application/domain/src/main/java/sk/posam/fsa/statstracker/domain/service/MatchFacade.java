@@ -15,6 +15,8 @@ public interface MatchFacade {
 
     List<Match> getAll();
 
+    List<Match> getAll(int page, int size);
+
     MatchWithStats getById(long id) throws StatsTrackerException;
 
     void create(Match match, List<PlayerMatchStats> team1Stats, List<PlayerMatchStats> team2Stats)
