@@ -1,5 +1,7 @@
 package sk.posam.fsa.statstracker.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -22,6 +24,8 @@ import java.util.List;
 @RestController
 public class PlayerRestController implements PlayersApi {
 
+    private static final Logger log = LoggerFactory.getLogger(PlayerRestController.class);
+
     private final PlayerFacade playerFacade;
     private final PlayerMapper playerMapper;
 
@@ -43,12 +47,14 @@ public class PlayerRestController implements PlayersApi {
         try {
             return ResponseEntity.ok(playerMapper.toDetailDto(playerFacade.getById(id)));
         } catch (StatsTrackerException e) {
+            log.warn("Player not found: id={}", id);
             return ResponseEntity.notFound().build();
         }
     }
 
     @Override
     public ResponseEntity<Void> createPlayer(CreatePlayerRequestDto createPlayerRequestDto) {
+        log.info("Creating player: nickname='{}'", createPlayerRequestDto.getNickname());
         Player player = playerMapper.toEntity(createPlayerRequestDto);
         playerFacade.createPlayer(player);
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -61,18 +67,21 @@ public class PlayerRestController implements PlayersApi {
         try {
             return ResponseEntity.ok(playerMapper.toMeDetailDto(playerFacade.getMe(keycloakSub)));
         } catch (StatsTrackerException e) {
+            log.warn("No player linked to user: sub={}", keycloakSub);
             return ResponseEntity.notFound().build();
         }
     }
 
     @Override
     public ResponseEntity<Void> linkPlayerToUser(Long id, LinkUserRequestDto linkUserRequestDto) {
+        log.info("Linking player id={} to keycloak user id={}", id, linkUserRequestDto.getKeycloakId());
         playerFacade.linkToUser(id, linkUserRequestDto.getKeycloakId());
         return ResponseEntity.ok().build();
     }
 
     @Override
     public ResponseEntity<Void> unlinkPlayerFromUser(Long id) {
+        log.info("Unlinking user from player id={}", id);
         playerFacade.unlinkUser(id);
         return ResponseEntity.noContent().build();
     }
@@ -80,9 +89,11 @@ public class PlayerRestController implements PlayersApi {
     @Override
     public ResponseEntity<Void> deletePlayer(Long id) {
         try {
+            log.info("Deleting player id={}", id);
             playerFacade.deletePlayer(id);
             return ResponseEntity.noContent().build();
         } catch (StatsTrackerException e) {
+            log.warn("Player not found for deletion: id={}", id);
             return ResponseEntity.notFound().build();
         }
     }
@@ -95,6 +106,7 @@ public class PlayerRestController implements PlayersApi {
                             .map(playerMapper::toHistoryEntryDto)
                             .toList());
         } catch (StatsTrackerException e) {
+            log.warn("Player not found for match history: id={}", id);
             return ResponseEntity.notFound().build();
         }
     }

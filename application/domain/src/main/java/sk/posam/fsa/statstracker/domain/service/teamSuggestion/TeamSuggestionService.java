@@ -1,5 +1,7 @@
 package sk.posam.fsa.statstracker.domain.service.teamSuggestion;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sk.posam.fsa.statstracker.domain.player.Player;
 import sk.posam.fsa.statstracker.domain.player.PlayerRepository;
 import sk.posam.fsa.statstracker.domain.player.PlayerStatsRepository;
@@ -20,6 +22,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class TeamSuggestionService implements TeamSuggestionFacade {
+
+        private static final Logger log = LoggerFactory.getLogger(TeamSuggestionService.class);
 
         private final PlayerRepository playerRepository;
         private final PlayerStatsRepository playerStatsRepository;
@@ -64,6 +68,7 @@ public class TeamSuggestionService implements TeamSuggestionFacade {
                 for (PlayerStatsSnapshot snapshot : snapshots) {
                         if (!HasMatchHistoryPredicate.INSTANCE.test(snapshot)) {
                                 String nickname = playerById.get(snapshot.getPlayerId()).getNickname();
+                                log.warn("Player '{}' has no match history – applying neutral values", nickname);
                                 warnings.add("noMatchHistory:" + nickname);
                                 snapshot.applyNeutralValues();
                         }
@@ -92,6 +97,8 @@ public class TeamSuggestionService implements TeamSuggestionFacade {
                 result.setSuggestions(top3);
                 result.setWarnings(warnings);
                 result.setPlayerAdrMap(playerAdrMap);
+                log.info("Team suggestions generated: {} options within maxAdrDifference={}", top3.size(),
+                                maxAdrDifference);
                 return result;
         }
 

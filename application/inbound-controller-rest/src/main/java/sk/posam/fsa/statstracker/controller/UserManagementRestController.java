@@ -1,5 +1,7 @@
 package sk.posam.fsa.statstracker.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import sk.posam.fsa.statstracker.domain.user.KeycloakUserInfo;
@@ -13,6 +15,8 @@ import java.util.List;
 @RestController
 public class UserManagementRestController implements UsersApi {
 
+    private static final Logger log = LoggerFactory.getLogger(UserManagementRestController.class);
+
     private final UserManagementFacade userManagementFacade;
 
     public UserManagementRestController(UserManagementFacade userManagementFacade) {
@@ -21,6 +25,7 @@ public class UserManagementRestController implements UsersApi {
 
     @Override
     public ResponseEntity<Void> createUser(UserCreateRequestDto request) {
+        log.info("Creating user: email='{}'", request.getEmail());
         userManagementFacade.createUser(request.getEmail(), request.getPassword(),
                 request.getFirstName(), request.getLastName());
         return ResponseEntity.status(201).build();
@@ -46,6 +51,7 @@ public class UserManagementRestController implements UsersApi {
 
     @Override
     public ResponseEntity<Void> deleteUser(String id) {
+        log.info("Deleting user id={}", id);
         userManagementFacade.deleteUser(id);
         return ResponseEntity.noContent().build();
     }

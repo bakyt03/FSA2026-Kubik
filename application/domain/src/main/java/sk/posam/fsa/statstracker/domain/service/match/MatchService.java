@@ -1,5 +1,7 @@
 package sk.posam.fsa.statstracker.domain.service.match;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sk.posam.fsa.statstracker.domain.match.Match;
 import sk.posam.fsa.statstracker.domain.match.MatchRepository;
 import sk.posam.fsa.statstracker.domain.match.MatchWithStats;
@@ -16,6 +18,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class MatchService implements MatchFacade {
+
+    private static final Logger log = LoggerFactory.getLogger(MatchService.class);
 
     private final MatchRepository matchRepository;
     private final PlayerStatsRepository playerStatsRepository;
@@ -83,6 +87,7 @@ public class MatchService implements MatchFacade {
             computeAdr(s, totalRounds);
             playerStatsRepository.create(s);
         });
+        log.info("Match created: id={}, score={}-{}", created.getId(), match.getTeam1Score(), match.getTeam2Score());
     }
 
     @Override
@@ -92,6 +97,7 @@ public class MatchService implements MatchFacade {
                         "Match not found: " + matchId));
         playerStatsRepository.deleteByMatchId(matchId);
         matchRepository.delete(matchId);
+        log.info("Match deleted: id={}", matchId);
     }
 
     private void computeAdr(PlayerMatchStats s, int totalRounds) {

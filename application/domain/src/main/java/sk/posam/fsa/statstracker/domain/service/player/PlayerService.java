@@ -1,5 +1,7 @@
 package sk.posam.fsa.statstracker.domain.service.player;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sk.posam.fsa.statstracker.domain.match.Match;
 import sk.posam.fsa.statstracker.domain.match.MatchRepository;
 import sk.posam.fsa.statstracker.domain.player.Player;
@@ -22,154 +24,160 @@ import java.util.stream.Collectors;
 
 public class PlayerService implements PlayerFacade {
 
-    private final PlayerRepository playerRepository;
-    private final PlayerStatsRepository playerStatsRepository;
-    private final MatchRepository matchRepository;
+        private static final Logger log = LoggerFactory.getLogger(PlayerService.class);
 
-    public PlayerService(PlayerRepository playerRepository, PlayerStatsRepository playerStatsRepository,
-            MatchRepository matchRepository) {
-        this.playerRepository = playerRepository;
-        this.playerStatsRepository = playerStatsRepository;
-        this.matchRepository = matchRepository;
-    }
+        private final PlayerRepository playerRepository;
+        private final PlayerStatsRepository playerStatsRepository;
+        private final MatchRepository matchRepository;
 
-    @Override
-    public void createPlayer(Player player) throws StatsTrackerException {
-        require(IsNotNullPredicate.<Player>getInstance().test(player),
-                StatsTrackerException.Type.VALIDATION, "Player must not be null");
-        player.validateForCreation();
-
-        Player existingPlayer = playerRepository.get(player.getNickname()).orElse(null);
-        require(IsUniqueNicknamePredicate.INSTANCE.test(player, existingPlayer),
-                StatsTrackerException.Type.CONFLICT,
-                "Player with nickname '" + player.getNickname() + "' already exists");
-
-        playerRepository.create(player);
-    }
-
-    @Override
-    public List<Player> findAll() {
-        return playerRepository.getAll();
-    }
-
-    @Override
-    public List<PlayerWithStats> findAllWithStats() {
-        List<Player> players = playerRepository.getAll();
-        if (players.isEmpty())
-            return List.of();
-        List<Long> ids = players.stream().map(Player::getId).collect(Collectors.toList());
-        Map<Long, PlayerStatsSnapshot> snapMap = playerStatsRepository.getForPlayers(ids).stream()
-                .collect(Collectors.toMap(PlayerStatsSnapshot::getPlayerId, s -> s));
-        return players.stream()
-                .map(p -> new PlayerWithStats(p, snapMap.get(p.getId())))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public PlayerDetail getById(long id) throws StatsTrackerException {
-        Player player = playerRepository.get(id)
-                .orElseThrow(() -> new StatsTrackerException(StatsTrackerException.Type.NOT_FOUND,
-                        "Player not found: " + id));
-        return buildDetail(player);
-    }
-
-    @Override
-    public void linkToUser(long playerId, String keycloakId) throws StatsTrackerException {
-        Player player = playerRepository.get(playerId)
-                .orElseThrow(() -> new StatsTrackerException(StatsTrackerException.Type.NOT_FOUND,
-                        "Player not found: " + playerId));
-        playerRepository.getByKeycloakId(keycloakId).ifPresent(existing -> {
-            if (existing.getId() != playerId) {
-                throw new StatsTrackerException(StatsTrackerException.Type.CONFLICT,
-                        "Keycloak account is already linked to another player");
-            }
-        });
-        player.setKeycloakId(keycloakId);
-        playerRepository.update(player);
-    }
-
-    @Override
-    public void unlinkUser(long playerId) throws StatsTrackerException {
-        Player player = playerRepository.get(playerId)
-                .orElseThrow(() -> new StatsTrackerException(StatsTrackerException.Type.NOT_FOUND,
-                        "Player not found: " + playerId));
-        player.setKeycloakId(null);
-        playerRepository.update(player);
-    }
-
-    @Override
-    public PlayerMeDetail getMe(String keycloakSub) throws StatsTrackerException {
-        Player player = playerRepository.getByKeycloakId(keycloakSub)
-                .orElseThrow(() -> new StatsTrackerException(StatsTrackerException.Type.NOT_FOUND,
-                        "No player linked to this account"));
-
-        PlayerDetail detail = buildDetail(player);
-
-        // Compute rank: count players with higher avgAdr (among those with ≥1 match)
-        List<Player> allPlayers = playerRepository.getAll();
-        List<Long> allIds = allPlayers.stream().map(Player::getId).collect(Collectors.toList());
-        Map<Long, PlayerStatsSnapshot> allSnapshots = playerStatsRepository.getForPlayers(allIds).stream()
-                .collect(Collectors.toMap(PlayerStatsSnapshot::getPlayerId, s -> s));
-
-        double myAdr = detail.getStats() != null ? detail.getStats().getAvgAdr() : 0.0;
-        long playersAhead = allSnapshots.values().stream()
-                .filter(HasMatchHistoryPredicate.INSTANCE)
-                .filter(s -> s.getAvgAdr() > myAdr)
-                .count();
-        int rank = (int) playersAhead + 1;
-
-        return new PlayerMeDetail(detail.getPlayer(), detail.getStats(), detail.getRecentMatches(), rank);
-    }
-
-    private PlayerDetail buildDetail(Player player) {
-        long id = player.getId();
-        List<PlayerStatsSnapshot> snapshots = playerStatsRepository.getForPlayers(List.of(id));
-        PlayerStatsSnapshot snapshot = snapshots.isEmpty() ? null : snapshots.get(0);
-        List<PlayerMatchStats> recentStats = playerStatsRepository.getForPlayer(id);
-        List<Long> matchIds = recentStats.stream()
-                .map(PlayerMatchStats::getMatchId)
-                .filter(IsNotNullPredicate.getInstance())
-                .collect(Collectors.toList());
-        Map<Long, Match> matchMap = matchRepository.getAllByIds(matchIds).stream()
-                .collect(Collectors.toMap(Match::getId, m -> m));
-        List<PlayerMatchHistoryEntry> history = recentStats.stream()
-                .filter(s -> matchMap.containsKey(s.getMatchId()))
-                .map(s -> new PlayerMatchHistoryEntry(matchMap.get(s.getMatchId()), s))
-                .collect(Collectors.toList());
-        return new PlayerDetail(player, snapshot, history);
-    }
-
-    @Override
-    public List<PlayerMatchHistoryEntry> getMatchHistory(long playerId, int page, int size)
-            throws StatsTrackerException {
-        playerRepository.get(playerId)
-                .orElseThrow(() -> new StatsTrackerException(StatsTrackerException.Type.NOT_FOUND,
-                        "Player not found: " + playerId));
-        List<PlayerMatchStats> stats = playerStatsRepository.getForPlayer(playerId, page, size);
-        List<Long> matchIds = stats.stream()
-                .map(PlayerMatchStats::getMatchId)
-                .filter(IsNotNullPredicate.getInstance())
-                .collect(Collectors.toList());
-        Map<Long, Match> matchMap = matchRepository.getAllByIds(matchIds).stream()
-                .collect(Collectors.toMap(Match::getId, m -> m));
-        return stats.stream()
-                .filter(s -> matchMap.containsKey(s.getMatchId()))
-                .map(s -> new PlayerMatchHistoryEntry(matchMap.get(s.getMatchId()), s))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public void deletePlayer(long playerId) throws StatsTrackerException {
-        playerRepository.get(playerId)
-                .orElseThrow(() -> new StatsTrackerException(StatsTrackerException.Type.NOT_FOUND,
-                        "Player not found: " + playerId));
-        playerStatsRepository.deleteByPlayerId(playerId);
-        playerRepository.delete(playerId);
-    }
-
-    private void require(boolean valid, StatsTrackerException.Type type, String message) {
-        if (!valid) {
-            throw new StatsTrackerException(type, message);
+        public PlayerService(PlayerRepository playerRepository, PlayerStatsRepository playerStatsRepository,
+                        MatchRepository matchRepository) {
+                this.playerRepository = playerRepository;
+                this.playerStatsRepository = playerStatsRepository;
+                this.matchRepository = matchRepository;
         }
-    }
+
+        @Override
+        public void createPlayer(Player player) throws StatsTrackerException {
+                require(IsNotNullPredicate.<Player>getInstance().test(player),
+                                StatsTrackerException.Type.VALIDATION, "Player must not be null");
+                player.validateForCreation();
+
+                Player existingPlayer = playerRepository.get(player.getNickname()).orElse(null);
+                require(IsUniqueNicknamePredicate.INSTANCE.test(player, existingPlayer),
+                                StatsTrackerException.Type.CONFLICT,
+                                "Player with nickname '" + player.getNickname() + "' already exists");
+
+                playerRepository.create(player);
+                log.info("Player created: nickname='{}'", player.getNickname());
+        }
+
+        @Override
+        public List<Player> findAll() {
+                return playerRepository.getAll();
+        }
+
+        @Override
+        public List<PlayerWithStats> findAllWithStats() {
+                List<Player> players = playerRepository.getAll();
+                if (players.isEmpty())
+                        return List.of();
+                List<Long> ids = players.stream().map(Player::getId).collect(Collectors.toList());
+                Map<Long, PlayerStatsSnapshot> snapMap = playerStatsRepository.getForPlayers(ids).stream()
+                                .collect(Collectors.toMap(PlayerStatsSnapshot::getPlayerId, s -> s));
+                return players.stream()
+                                .map(p -> new PlayerWithStats(p, snapMap.get(p.getId())))
+                                .collect(Collectors.toList());
+        }
+
+        @Override
+        public PlayerDetail getById(long id) throws StatsTrackerException {
+                Player player = playerRepository.get(id)
+                                .orElseThrow(() -> new StatsTrackerException(StatsTrackerException.Type.NOT_FOUND,
+                                                "Player not found: " + id));
+                return buildDetail(player);
+        }
+
+        @Override
+        public void linkToUser(long playerId, String keycloakId) throws StatsTrackerException {
+                Player player = playerRepository.get(playerId)
+                                .orElseThrow(() -> new StatsTrackerException(StatsTrackerException.Type.NOT_FOUND,
+                                                "Player not found: " + playerId));
+                playerRepository.getByKeycloakId(keycloakId).ifPresent(existing -> {
+                        if (existing.getId() != playerId) {
+                                throw new StatsTrackerException(StatsTrackerException.Type.CONFLICT,
+                                                "Keycloak account is already linked to another player");
+                        }
+                });
+                player.setKeycloakId(keycloakId);
+                playerRepository.update(player);
+                log.info("Player id={} linked to keycloak user '{}'", playerId, keycloakId);
+        }
+
+        @Override
+        public void unlinkUser(long playerId) throws StatsTrackerException {
+                Player player = playerRepository.get(playerId)
+                                .orElseThrow(() -> new StatsTrackerException(StatsTrackerException.Type.NOT_FOUND,
+                                                "Player not found: " + playerId));
+                player.setKeycloakId(null);
+                playerRepository.update(player);
+                log.info("Keycloak user unlinked from player id={}", playerId);
+        }
+
+        @Override
+        public PlayerMeDetail getMe(String keycloakSub) throws StatsTrackerException {
+                Player player = playerRepository.getByKeycloakId(keycloakSub)
+                                .orElseThrow(() -> new StatsTrackerException(StatsTrackerException.Type.NOT_FOUND,
+                                                "No player linked to this account"));
+
+                PlayerDetail detail = buildDetail(player);
+
+                // Compute rank: count players with higher avgAdr (among those with ≥1 match)
+                List<Player> allPlayers = playerRepository.getAll();
+                List<Long> allIds = allPlayers.stream().map(Player::getId).collect(Collectors.toList());
+                Map<Long, PlayerStatsSnapshot> allSnapshots = playerStatsRepository.getForPlayers(allIds).stream()
+                                .collect(Collectors.toMap(PlayerStatsSnapshot::getPlayerId, s -> s));
+
+                double myAdr = detail.getStats() != null ? detail.getStats().getAvgAdr() : 0.0;
+                long playersAhead = allSnapshots.values().stream()
+                                .filter(HasMatchHistoryPredicate.INSTANCE)
+                                .filter(s -> s.getAvgAdr() > myAdr)
+                                .count();
+                int rank = (int) playersAhead + 1;
+
+                return new PlayerMeDetail(detail.getPlayer(), detail.getStats(), detail.getRecentMatches(), rank);
+        }
+
+        private PlayerDetail buildDetail(Player player) {
+                long id = player.getId();
+                List<PlayerStatsSnapshot> snapshots = playerStatsRepository.getForPlayers(List.of(id));
+                PlayerStatsSnapshot snapshot = snapshots.isEmpty() ? null : snapshots.get(0);
+                List<PlayerMatchStats> recentStats = playerStatsRepository.getForPlayer(id);
+                List<Long> matchIds = recentStats.stream()
+                                .map(PlayerMatchStats::getMatchId)
+                                .filter(IsNotNullPredicate.getInstance())
+                                .collect(Collectors.toList());
+                Map<Long, Match> matchMap = matchRepository.getAllByIds(matchIds).stream()
+                                .collect(Collectors.toMap(Match::getId, m -> m));
+                List<PlayerMatchHistoryEntry> history = recentStats.stream()
+                                .filter(s -> matchMap.containsKey(s.getMatchId()))
+                                .map(s -> new PlayerMatchHistoryEntry(matchMap.get(s.getMatchId()), s))
+                                .collect(Collectors.toList());
+                return new PlayerDetail(player, snapshot, history);
+        }
+
+        @Override
+        public List<PlayerMatchHistoryEntry> getMatchHistory(long playerId, int page, int size)
+                        throws StatsTrackerException {
+                playerRepository.get(playerId)
+                                .orElseThrow(() -> new StatsTrackerException(StatsTrackerException.Type.NOT_FOUND,
+                                                "Player not found: " + playerId));
+                List<PlayerMatchStats> stats = playerStatsRepository.getForPlayer(playerId, page, size);
+                List<Long> matchIds = stats.stream()
+                                .map(PlayerMatchStats::getMatchId)
+                                .filter(IsNotNullPredicate.getInstance())
+                                .collect(Collectors.toList());
+                Map<Long, Match> matchMap = matchRepository.getAllByIds(matchIds).stream()
+                                .collect(Collectors.toMap(Match::getId, m -> m));
+                return stats.stream()
+                                .filter(s -> matchMap.containsKey(s.getMatchId()))
+                                .map(s -> new PlayerMatchHistoryEntry(matchMap.get(s.getMatchId()), s))
+                                .collect(Collectors.toList());
+        }
+
+        @Override
+        public void deletePlayer(long playerId) throws StatsTrackerException {
+                playerRepository.get(playerId)
+                                .orElseThrow(() -> new StatsTrackerException(StatsTrackerException.Type.NOT_FOUND,
+                                                "Player not found: " + playerId));
+                playerStatsRepository.deleteByPlayerId(playerId);
+                playerRepository.delete(playerId);
+                log.info("Player deleted: id={}", playerId);
+        }
+
+        private void require(boolean valid, StatsTrackerException.Type type, String message) {
+                if (!valid) {
+                        throw new StatsTrackerException(type, message);
+                }
+        }
 }
