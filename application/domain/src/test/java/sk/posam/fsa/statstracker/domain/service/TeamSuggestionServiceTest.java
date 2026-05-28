@@ -92,9 +92,9 @@ class TeamSuggestionServiceTest {
         TeamSuggestionResult result = service.generateSuggestions(ids);
 
         assertEquals(3, result.getSuggestions().size());
-        assertEquals(0.9, result.getSuggestions().get(0).getBalanceScore());
-        assertEquals(0.7, result.getSuggestions().get(1).getBalanceScore());
-        assertEquals(0.5, result.getSuggestions().get(2).getBalanceScore());
+        assertEquals(0.3, result.getSuggestions().get(0).getAdrDifference());
+        assertEquals(0.5, result.getSuggestions().get(1).getAdrDifference());
+        assertEquals(0.7, result.getSuggestions().get(2).getAdrDifference());
         assertTrue(result.getWarnings().isEmpty());
     }
 
@@ -171,7 +171,7 @@ class TeamSuggestionServiceTest {
         return snapshots;
     }
 
-    private TeamSuggestion suggestion(double balanceScore) {
+    private TeamSuggestion suggestion(double adrDifference) {
         Team teamA = new Team();
         teamA.setSide("A");
         teamA.setPlayers(List.of());
@@ -183,7 +183,7 @@ class TeamSuggestionServiceTest {
         TeamSuggestion s = new TeamSuggestion();
         s.setTeamA(teamA);
         s.setTeamB(teamB);
-        s.setBalanceScore(balanceScore);
+        s.setAdrDifference(adrDifference);
         return s;
     }
 }
