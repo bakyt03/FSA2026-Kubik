@@ -579,6 +579,8 @@ components:
       required:
         - email
         - password
+        - firstName
+        - lastName
       properties:
         email:
           type: string
@@ -586,6 +588,12 @@ components:
         password:
           type: string
           minLength: 8
+        firstName:
+          type: string
+          minLength: 1
+        lastName:
+          type: string
+          minLength: 1
 
     # ── Team Suggestion ───────────────────────────────────────────────────────
     TeamSuggestionRequest:

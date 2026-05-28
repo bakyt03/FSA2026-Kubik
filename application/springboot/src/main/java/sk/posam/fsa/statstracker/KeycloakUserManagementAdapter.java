@@ -32,9 +32,9 @@ public class KeycloakUserManagementAdapter implements UserManagementPort {
     }
 
     @Override
-    public void createUser(String email, String password) {
+    public void createUser(String email, String password, String firstName, String lastName) {
         String token = getAdminToken();
-        String userId = createKeycloakUser(token, email, password);
+        String userId = createKeycloakUser(token, email, password, firstName, lastName);
         assignUserRole(token, userId);
     }
 
@@ -88,7 +88,7 @@ public class KeycloakUserManagementAdapter implements UserManagementPort {
         return (String) response.get("access_token");
     }
 
-    private String createKeycloakUser(String token, String email, String password) {
+    private String createKeycloakUser(String token, String email, String password, String firstName, String lastName) {
         Map<String, Object> credential = Map.of(
                 "type", "password",
                 "value", password,
@@ -96,6 +96,8 @@ public class KeycloakUserManagementAdapter implements UserManagementPort {
         Map<String, Object> user = Map.of(
                 "username", email,
                 "email", email,
+                "firstName", firstName,
+                "lastName", lastName,
                 "enabled", true,
                 "emailVerified", true,
                 "credentials", List.of(credential));
@@ -127,12 +129,19 @@ public class KeycloakUserManagementAdapter implements UserManagementPort {
                 .retrieve()
                 .body(Map.class);
 
-        restClient.post()
-                .uri("/admin/realms/{realm}/users/{id}/role-mappings/realm", realm, userId)
-                .header("Authorization", "Bearer " + token)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(List.of(role))
-                .retrieve()
-                .toBodilessEntity();
+        try {
+            restClient.post()
+                    .uri("/admin/realms/{realm}/users/{id}/role-mappings/realm", realm, userId)
+                    .header("Authorization", "Bearer " + token)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(List.of(role))
+                    .retrieve()
+                    .toBodilessEntity();
+        } catch (HttpClientErrorException.Forbidden e) {
+            throw new IllegalStateException(
+                    "User was created but role assignment failed (403). " +
+                    "Grant the 'manage-users' and 'manage-roles' (or 'realm-admin') roles " +
+                    "to the '" + clientId + "' service account in the realm-management client.", e);
+        }
     }
 }

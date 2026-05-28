@@ -21,7 +21,8 @@ public class UserManagementRestController implements UsersApi {
 
     @Override
     public ResponseEntity<Void> createUser(UserCreateRequestDto request) {
-        userManagementFacade.createUser(request.getEmail(), request.getPassword());
+        userManagementFacade.createUser(request.getEmail(), request.getPassword(),
+                request.getFirstName(), request.getLastName());
         return ResponseEntity.status(201).build();
     }
 

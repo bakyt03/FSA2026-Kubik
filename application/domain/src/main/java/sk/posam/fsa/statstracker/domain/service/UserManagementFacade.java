@@ -5,7 +5,7 @@ import sk.posam.fsa.statstracker.domain.KeycloakUserInfo;
 import java.util.List;
 
 public interface UserManagementFacade {
-    void createUser(String email, String password);
+    void createUser(String email, String password, String firstName, String lastName);
 
     List<KeycloakUserInfo> listUsers();
 

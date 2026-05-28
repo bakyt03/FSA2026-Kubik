@@ -17,8 +17,8 @@ public class UserManagementService implements UserManagementFacade {
     }
 
     @Override
-    public void createUser(String email, String password) {
-        port.createUser(email, password);
+    public void createUser(String email, String password, String firstName, String lastName) {
+        port.createUser(email, password, firstName, lastName);
     }
 
     @Override
