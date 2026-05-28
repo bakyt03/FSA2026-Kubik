@@ -39,6 +39,8 @@ public class UserManagementRestController implements UsersApi {
         dto.setId(info.getId());
         dto.setUsername(info.getUsername());
         dto.setEmail(info.getEmail());
+        dto.setFirstName(info.getFirstName());
+        dto.setLastName(info.getLastName());
         return dto;
     }
 

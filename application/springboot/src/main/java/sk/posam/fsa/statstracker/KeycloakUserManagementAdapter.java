@@ -55,7 +55,9 @@ public class KeycloakUserManagementAdapter implements UserManagementPort {
                 .map(u -> new KeycloakUserInfo(
                         (String) u.get("id"),
                         (String) u.getOrDefault("username", ""),
-                        (String) u.getOrDefault("email", "")))
+                        (String) u.getOrDefault("email", ""),
+                        (String) u.getOrDefault("firstName", ""),
+                        (String) u.getOrDefault("lastName", "")))
                 .toList();
     }
 
